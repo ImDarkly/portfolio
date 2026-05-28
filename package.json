@@ -1,0 +1,8 @@
+{
+  "name": "portfolio-v2",
+  "private": true,
+  "workspaces": [
+    "src",
+    "studio"
+  ]
+}
