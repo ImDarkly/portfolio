@@ -4,5 +4,8 @@
   "workspaces": [
     "src",
     "studio"
-  ]
+  ],
+  "engines": {
+    "node": "20.x"
+  }
 }
