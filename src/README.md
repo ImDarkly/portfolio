@@ -10,7 +10,7 @@ To add components to your app, run the following command:
 npx shadcn@latest add button
 ```
 
-This will place the ui components in the `src/components` directory.
+This will place the ui components in the `src/components/ui` directory.
 
 ## Using components
 
