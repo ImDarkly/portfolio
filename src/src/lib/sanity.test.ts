@@ -33,7 +33,7 @@ describe("getProjects", () => {
         note: "Featured",
         order: 10,
       },
-    ])
+    ] as never)
 
     const projects = await getProjects()
 

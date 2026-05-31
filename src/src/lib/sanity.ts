@@ -46,7 +46,7 @@ function createMissingClient(): SanityClient {
     fetch() {
       return Promise.reject(missingConfigError)
     },
-  } as SanityClient
+  } as unknown as SanityClient
 }
 
 const { projectId, dataset } = getSanityConfig()
