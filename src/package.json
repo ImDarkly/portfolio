@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview"
   },
@@ -16,6 +17,8 @@
     "@fontsource-variable/ibm-plex-sans": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@remixicon/react": "^4.9.0",
+    "@sanity/client": "^7.22.1",
+    "@sanity/image-url": "^2.1.1",
     "@tailwindcss/vite": "^4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -32,15 +35,18 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^6",
+    "@vitest/coverage-v8": "^4.1.7",
     "eslint": "^10",
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17",
+    "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "typescript": "~6",
     "typescript-eslint": "^8",
-    "vite": "^8"
+    "vite": "^8",
+    "vitest": "^4.1.7"
   },
   "packageManager": "npm@10.9.4",
   "workspaces": [
