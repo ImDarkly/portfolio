@@ -1,6 +1,11 @@
 import { Button } from "@/components/ui/button"
+import { useEffect } from "react"
+import { getProjects } from "./lib/sanity"
 
 export function App() {
+  useEffect(() => {
+    getProjects().then(console.log)
+  }, [])
   return (
     <div className="flex min-h-svh p-6">
       <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">

@@ -16,6 +16,8 @@
     "@fontsource-variable/ibm-plex-sans": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@remixicon/react": "^4.9.0",
+    "@sanity/client": "^7.22.1",
+    "@sanity/image-url": "^2.1.1",
     "@tailwindcss/vite": "^4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
