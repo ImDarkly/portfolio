@@ -1,4 +1,5 @@
 import { createClient } from "@sanity/client"
+import type { SanityClient } from "@sanity/client"
 import type { SanityImageSource } from "@sanity/image-url"
 
 export type Project = {
@@ -23,15 +24,42 @@ type SanityProjectDocument = {
   order?: number
 }
 
-const projectId = import.meta.env.VITE_SANITY_PROJECT_ID
-const dataset = import.meta.env.VITE_SANITY_DATASET
+function getSanityConfig() {
+  return {
+    projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
+    dataset: import.meta.env.VITE_SANITY_DATASET,
+  }
+}
 
-export const sanityClient = createClient({
-  projectId: projectId ?? "",
-  dataset: dataset ?? "",
-  apiVersion: "2025-05-31",
-  useCdn: false,
-})
+function createMissingClient(): SanityClient {
+  const missingConfigError = new Error("Missing VITE_SANITY_PROJECT_ID or VITE_SANITY_DATASET")
+
+  return {
+    config() {
+      const { projectId, dataset } = getSanityConfig()
+
+      return {
+        projectId: projectId ?? "",
+        dataset: dataset ?? "",
+      }
+    },
+    fetch() {
+      return Promise.reject(missingConfigError)
+    },
+  } as SanityClient
+}
+
+const { projectId, dataset } = getSanityConfig()
+
+export const sanityClient =
+  projectId && dataset
+    ? createClient({
+        projectId,
+        dataset,
+        apiVersion: "2025-05-31",
+        useCdn: false,
+      })
+    : createMissingClient()
 
 const projectsQuery = /* groq */ `
   *[_type == "project"]{
@@ -72,11 +100,13 @@ function mapProject(document: Required<SanityProjectDocument>): Project {
 }
 
 export async function getProjects(): Promise<Project[]> {
-  if (!projectId) {
+  const { projectId: currentProjectId, dataset: currentDataset } = getSanityConfig()
+
+  if (!currentProjectId) {
     throw new Error("Missing VITE_SANITY_PROJECT_ID")
   }
 
-  if (!dataset) {
+  if (!currentDataset) {
     throw new Error("Missing VITE_SANITY_DATASET")
   }
 
