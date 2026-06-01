@@ -8,7 +8,7 @@ type SectionProps = {
 export function Section({ label, children }: SectionProps) {
   return (
     <section className="flex w-full flex-col items-start gap-2">
-      <h2 className="lowercase text-2xl font-medium text-white sm:text-3xl">
+      <h2 className="font-heading text-2xl font-medium lowercase text-white sm:text-3xl">
         {label}
       </h2>
       <div className="w-full">{children}</div>
