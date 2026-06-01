@@ -1,6 +1,6 @@
-import { Contact } from "@/components/contact"
-import { Hero } from "@/components/hero"
-import { Projects } from "@/components/projects"
+import { Contact } from "@/components/sections/contact"
+import { Hero } from "@/components/sections/hero"
+import { Projects } from "@/components/projects/projects"
 
 export function App() {
   return (

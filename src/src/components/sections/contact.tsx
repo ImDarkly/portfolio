@@ -1,4 +1,4 @@
-import { Section } from "@/components/section"
+import { Section } from "@/components/layout/section"
 
 export function Contact() {
   return (
