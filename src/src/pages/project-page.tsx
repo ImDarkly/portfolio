@@ -1,3 +1,5 @@
+import { navigate } from "@/hooks/use-location-path"
+
 type ProjectPageProps = {
   slug: string
 }
@@ -19,8 +21,7 @@ export function ProjectPage({ slug }: ProjectPageProps) {
           href="/"
           onClick={(event) => {
             event.preventDefault()
-            window.history.pushState({}, "", "/")
-            window.dispatchEvent(new PopStateEvent("popstate"))
+            navigate("/")
           }}
           className="font-heading text-xs uppercase tracking-[0.18em] text-white"
         >

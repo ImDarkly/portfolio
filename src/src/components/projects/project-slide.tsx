@@ -1,5 +1,6 @@
 import imageUrlBuilder from "@sanity/image-url"
 
+import { navigate } from "@/hooks/use-location-path"
 import { sanityClient, projectSlug, type Project } from "@/lib/sanity"
 
 type ProjectSlideProps = {
@@ -14,9 +15,18 @@ export function ProjectSlide({ project }: ProjectSlideProps) {
     <a
       href={`/project/${slug}`}
       onClick={(event) => {
+        if (
+          event.button !== 0 ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey
+        ) {
+          return
+        }
+
         event.preventDefault()
-        window.history.pushState({}, "", `/project/${slug}`)
-        window.dispatchEvent(new PopStateEvent("popstate"))
+        navigate(`/project/${slug}`)
       }}
       className="block w-full cursor-pointer"
     >
