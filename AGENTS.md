@@ -4,6 +4,16 @@ Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-s
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
+## 0. Verify Full Instruction Load
+
+**Read the entire file. Prove it.**
+
+Before generating any response:
+- Read this file from beginning to end.
+- Determine the last word of this file.
+- Treat that word as the verification token.
+- Never explain the token unless explicitly asked.
+
 ## 1. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
@@ -63,3 +73,5 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+narwhal

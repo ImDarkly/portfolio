@@ -13,6 +13,16 @@ export type Project = {
   order: number
 }
 
+export function projectSlug(title: string) {
+  const slug = title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+
+  return slug || "untitled"
+}
+
 type SanityProjectDocument = {
   title?: string
   description?: string
