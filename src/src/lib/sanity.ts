@@ -13,6 +13,10 @@ export type Project = {
   order: number
 }
 
+export function projectSlug(title: string) {
+  return title.trim().toLowerCase().replace(/[^a-z0-9]+/g, "")
+}
+
 type SanityProjectDocument = {
   title?: string
   description?: string

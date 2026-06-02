@@ -1,17 +1,17 @@
-import { Contact } from "@/components/sections/contact"
-import { Hero } from "@/components/sections/hero"
-import { Projects } from "@/components/projects/projects"
+import { HomePage } from "@/pages/home-page"
+import { ProjectPage } from "@/pages/project-page"
+import { useLocationPath } from "@/hooks/use-location-path"
 
 export function App() {
-  return (
-    <main className="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
-      <div className="flex w-full max-w-2xl flex-col items-start justify-center gap-5 text-left">
-        <Hero />
-        <Projects />
-        <Contact />
-      </div>
-    </main>
-  )
+  const path = useLocationPath()
+
+  if (path.startsWith("/project/")) {
+    const slug = path.split("/").at(-1) ?? ""
+
+    return <ProjectPage slug={slug} />
+  }
+
+  return <HomePage />
 }
 
 export default App

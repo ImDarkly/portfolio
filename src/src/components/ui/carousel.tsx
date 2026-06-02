@@ -155,13 +155,13 @@ function CarouselPrevious({
   const { scrollPrev, canScrollPrev } = useCarousel()
 
   return (
-    <Button
-      data-slot="carousel-previous"
-      type="button"
-      variant="outline"
-      size="icon"
-      className={cn(
-        "absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-none border-border bg-background text-foreground shadow-none",
+      <Button
+        data-slot="carousel-previous"
+        type="button"
+        variant="outline"
+        size="icon"
+        className={cn(
+        "absolute left-0 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-none border-border bg-background text-foreground shadow-none",
         className
       )}
       disabled={!canScrollPrev}
@@ -181,13 +181,13 @@ function CarouselNext({
   const { scrollNext, canScrollNext } = useCarousel()
 
   return (
-    <Button
-      data-slot="carousel-next"
-      type="button"
-      variant="outline"
-      size="icon"
-      className={cn(
-        "absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 rounded-none border-border bg-background text-foreground shadow-none",
+      <Button
+        data-slot="carousel-next"
+        type="button"
+        variant="outline"
+        size="icon"
+        className={cn(
+        "absolute right-0 top-1/2 z-20 translate-x-1/2 -translate-y-1/2 rounded-none border-border bg-background text-foreground shadow-none",
         className
       )}
       disabled={!canScrollNext}
