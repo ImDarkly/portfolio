@@ -124,3 +124,9 @@ export async function getProjects(): Promise<Project[]> {
 
   return documents.filter(isProjectDocument).map(mapProject).sort((a, b) => a.order - b.order)
 }
+
+export async function getProjectBySlug(slug: string): Promise<Project | null> {
+  const projects = await getProjects()
+
+  return projects.find((project) => projectSlug(project.title) === slug) ?? null
+}

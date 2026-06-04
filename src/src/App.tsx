@@ -6,7 +6,13 @@ export function App() {
   const path = useLocationPath()
 
   if (path.startsWith("/project/")) {
-    const slug = path.split("/").filter(Boolean).at(-1) ?? ""
+    const rawSlug = path.split("/").filter(Boolean).at(-1) ?? ""
+    let slug = rawSlug
+    try {
+      slug = decodeURIComponent(rawSlug)
+    } catch {
+      // Malformed percent-encoding; fall back to raw segment
+    }
 
     return <ProjectPage slug={slug} />
   }
