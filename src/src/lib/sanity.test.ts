@@ -1,6 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { getProjectBySlug, getProjects, projectSlug, sanityClient } from "./sanity"
+import {
+  getProjectBySlug,
+  getProjects,
+  projectSlug,
+  sanityClient,
+} from "./sanity"
 
 describe("getProjects", () => {
   afterEach(() => {
@@ -86,7 +91,7 @@ describe("getProjectBySlug", () => {
       },
     ] as never)
 
-    await expect(getProjectBySlug(projectSlug("My First Project"))).resolves.toEqual({
+    await expect(getProjectBySlug("my-first-project")).resolves.toEqual({
       title: "My First Project",
       description: "Desc",
       techStack: ["React"],
