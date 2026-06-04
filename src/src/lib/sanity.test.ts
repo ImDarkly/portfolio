@@ -1,11 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import {
-  getProjectBySlug,
-  getProjects,
-  projectSlug,
-  sanityClient,
-} from "./sanity"
+import { getProjectBySlug, getProjects, sanityClient } from "./sanity"
 
 describe("getProjects", () => {
   afterEach(() => {
