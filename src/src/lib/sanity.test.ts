@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
-import { getProjects, sanityClient } from "./sanity"
+import { getProjectBySlug, getProjects, projectSlug, sanityClient } from "./sanity"
 
 describe("getProjects", () => {
   afterEach(() => {
@@ -60,5 +60,61 @@ describe("getProjects", () => {
         order: 20,
       },
     ])
+  })
+})
+
+describe("getProjectBySlug", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs()
+    vi.restoreAllMocks()
+  })
+
+  it("finds a project by slug generated from its title", async () => {
+    vi.stubEnv("VITE_SANITY_PROJECT_ID", "project-id")
+    vi.stubEnv("VITE_SANITY_DATASET", "dataset")
+
+    vi.spyOn(sanityClient, "fetch").mockResolvedValue([
+      {
+        title: "My First Project",
+        description: "Desc",
+        techStack: ["React"],
+        image: { _type: "image", asset: { _ref: "image-a" } },
+        liveUrl: "https://example.com",
+        githubUrl: "https://github.com/example/a",
+        note: null,
+        order: 1,
+      },
+    ] as never)
+
+    await expect(getProjectBySlug(projectSlug("My First Project"))).resolves.toEqual({
+      title: "My First Project",
+      description: "Desc",
+      techStack: ["React"],
+      image: { _type: "image", asset: { _ref: "image-a" } },
+      liveUrl: "https://example.com",
+      githubUrl: "https://github.com/example/a",
+      note: null,
+      order: 1,
+    })
+  })
+
+  it("returns null when no slug matches", async () => {
+    vi.stubEnv("VITE_SANITY_PROJECT_ID", "project-id")
+    vi.stubEnv("VITE_SANITY_DATASET", "dataset")
+
+    vi.spyOn(sanityClient, "fetch").mockResolvedValue([
+      {
+        title: "Another Project",
+        description: "Desc",
+        techStack: ["React"],
+        image: { _type: "image", asset: { _ref: "image-a" } },
+        liveUrl: null,
+        githubUrl: "https://github.com/example/a",
+        note: null,
+        order: 1,
+      },
+    ] as never)
+
+    await expect(getProjectBySlug("missing")).resolves.toBeNull()
   })
 })
