@@ -1,4 +1,10 @@
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel"
 import type { Project } from "@/lib/sanity"
 
 import { CarouselFraction } from "./carousel-fraction"
@@ -11,9 +17,14 @@ type ProjectsCarouselProps = {
 export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
   return (
     <Carousel className="w-full" opts={{ loop: true }}>
+      <div className="mb-4 flex items-center justify-between">
+        <CarouselFraction />
+        <div className="flex gap-2">
+          <CarouselPrevious className="static translate-x-0 translate-y-0" />
+          <CarouselNext className="static translate-x-0 translate-y-0" />
+        </div>
+      </div>
       <div className="relative">
-        <CarouselPrevious />
-        <CarouselNext />
         <CarouselContent className="-ml-4">
           {projects.map((project) => (
             <CarouselItem key={project.title} className="basis-full pl-4">
@@ -21,9 +32,6 @@ export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
             </CarouselItem>
           ))}
         </CarouselContent>
-      </div>
-      <div className="mt-2 flex justify-center">
-        <CarouselFraction />
       </div>
     </Carousel>
   )
