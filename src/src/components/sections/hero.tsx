@@ -7,7 +7,7 @@ export function Hero() {
       <p className="text-sm text-muted-foreground lowercase sm:text-base">
         frontend developer
       </p>
-      <p className="max-w-prose font-sans text-sm leading-6 text-white lowercase sm:text-base">
+      <p className="max-w-prose font-sans text-sm leading-6 text-foreground lowercase sm:text-base">
         self-taught frontend developer who learns fast and ships polished React
         apps. i've built production-ready work both solo and with teams, and i'm
         looking for a role where i can contribute from day one and keep growing.

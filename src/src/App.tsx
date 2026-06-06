@@ -6,7 +6,8 @@ export function App() {
   const path = useLocationPath()
 
   if (path.startsWith("/project/")) {
-    const rawSlug = path.split("/").filter(Boolean).at(-1) ?? ""
+    const segments = path.split("/").filter(Boolean)
+    const rawSlug = segments.length > 1 ? segments[segments.length - 1] : ""
     let slug = rawSlug
     try {
       slug = decodeURIComponent(rawSlug)
