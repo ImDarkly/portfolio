@@ -5,9 +5,11 @@ A portfolio website built with React, TypeScript, Vite, and Sanity CMS.
 Frontend portfolio with a carousel of projects managed through Sanity CMS. Deployed as a static site.
 
 ### Live
-[https://hryhorchuk.vercel.app](https://hryhorchuk.vercel.app)
+
+[https://hryhorchuk.vercel.app/](https://hryhorchuk.vercel.app/)
 
 ### Stack
+
 React 19, TypeScript, Vite, Tailwind CSS 4, Sanity, Embla Carousel
 
 ## Project Structure
@@ -67,8 +69,13 @@ cd src && npm run dev
 cd studio && npm run dev
 ```
 
-Frontend: `http://localhost:5173`
-Studio: `http://localhost:3333`
+### Frontend URL
+
+http://localhost:5173
+
+### Studio URL
+
+http://localhost:3333
 
 ### Build
 
@@ -79,14 +86,16 @@ cd studio && npm run build
 
 ### Commands
 
-Frontend
+#### Frontend
+
 - `npm run dev` — Dev server
 - `npm run build` — Production build
 - `npm run lint` — ESLint
 - `npm run format` — Prettier
 - `npm run test` — Vitest
 
-Studio
+#### Studio
+
 - `npm run deploy` — Deploy to Sanity
 
 ## Adding Projects
@@ -112,11 +121,13 @@ Projects are managed in Sanity Studio. Required fields:
 ## Deployment
 
 ### Frontend (Vercel)
+
 1. Connect repo to Vercel
 2. Add environment variables
 3. Deploy
 
 ### Studio
+
 ```bash
 cd studio && npm run deploy
 ```
@@ -124,10 +135,12 @@ cd studio && npm run deploy
 ## Troubleshooting
 
 ### Projects not showing
+
 - Check `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` in `.env`
 - Verify projects exist in Sanity Studio
 - Restart dev server
 
 ### Sanity connection fails
+
 - Check internet connection
 - Verify `.env` variables are correct
