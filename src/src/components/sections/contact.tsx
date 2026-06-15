@@ -30,7 +30,7 @@ export function Contact() {
         {contactLinks.map((link) => (
           <a
             key={link.label}
-            className="text-white underline decoration-white/30 underline-offset-2 transition-colors hover:text-primary hover:decoration-primary"
+            className="text-foreground underline decoration-foreground/30 underline-offset-2 transition-colors hover:text-primary hover:decoration-primary"
             href={link.external ? link.href : `mailto:${link.href}`}
             rel={link.external ? "noreferrer" : undefined}
             target={link.external ? "_blank" : undefined}

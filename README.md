@@ -37,8 +37,8 @@ portfolio-v2/
 
 ### Prerequisites
 
-Node.js 20.x
-npm 10.9.4+
+- Node.js 20.x
+- npm 10.9.4+
 
 ### Installation
 
