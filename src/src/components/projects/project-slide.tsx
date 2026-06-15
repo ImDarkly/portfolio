@@ -9,7 +9,11 @@ type ProjectSlideProps = {
 
 export function ProjectSlide({ project }: ProjectSlideProps) {
   const slug = projectSlug(project.title)
-  const imageUrl = imageUrlBuilder(sanityClient).image(project.image).width(1600).height(900).url()
+  const imageUrl = imageUrlBuilder(sanityClient)
+    .image(project.image)
+    .width(1600)
+    .height(900)
+    .url()
 
   return (
     <a
