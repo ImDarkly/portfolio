@@ -1,0 +1,107 @@
+---
+import { Image } from "astro:assets"
+import { getCollection } from "astro:content"
+
+import ArrowLeftLine from "@/components/icons/ArrowLeftLine.astro"
+import ArrowRightLine from "@/components/icons/ArrowRightLine.astro"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+
+export async function getStaticPaths() {
+  const entries = await getCollection("projects")
+
+  return entries.map((entry) => ({
+    params: { slug: entry.data.slug },
+    props: { entry },
+  }))
+}
+
+const { entry } = Astro.props
+const { title, description, note, tech, image, githubUrl, liveUrl } = entry.data
+---
+
+<BaseLayout>
+  <main class="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
+    <div class="flex w-full max-w-2xl flex-col gap-5 text-left">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 self-start border border-border bg-transparent px-4 py-2 font-heading text-xs text-muted-foreground lowercase transition-colors hover:text-foreground"
+      >
+        <ArrowLeftLine />
+        back home
+      </a>
+
+      <div class="flex flex-col gap-5">
+        <h1
+          class="font-heading text-4xl leading-none font-medium break-words text-foreground sm:text-6xl"
+        >
+          {title}
+        </h1>
+
+        <Image
+          src={image}
+          alt={title}
+          width={1600}
+          widths={[640, 960, 1280, 1600]}
+          sizes="(min-width: 672px) 672px, calc(100vw - 2rem)"
+          format="webp"
+          quality={80}
+          loading="lazy"
+          class="aspect-video w-full border border-border object-cover"
+        />
+
+        <div class="flex flex-col gap-4">
+          <p
+            class="max-w-3xl font-sans text-sm leading-6 text-foreground sm:text-base"
+          >
+            {description}
+          </p>
+
+          {
+            note ? (
+              <p
+                class="max-w-3xl font-sans text-sm leading-6 text-muted-foreground"
+              >
+                {note}
+              </p>
+            ) : null
+          }
+
+          <div class="flex flex-wrap gap-2">
+            {
+              tech.map((item) => (
+                <span class="border border-border px-2 py-1 font-heading text-[11px] text-foreground lowercase">
+                  {item}
+                </span>
+              ))
+            }
+          </div>
+
+          <div class="flex flex-wrap gap-3 pt-1">
+            <a
+              href={githubUrl}
+              target="_blank"
+              rel="noreferrer"
+              class="inline-flex items-center gap-2 border border-[#181717] bg-[#181717] px-4 py-2 font-heading text-xs text-white lowercase transition-colors hover:bg-[#181717]/90"
+            >
+              github
+              <ArrowRightLine />
+            </a>
+            {
+              liveUrl ? (
+                <a
+                  href={liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  class="inline-flex items-center gap-2 border border-emerald-500 bg-emerald-500 px-4 py-2 font-heading text-xs text-background lowercase transition-colors hover:bg-emerald-500/90"
+                >
+                  live demo
+                  <ArrowRightLine />
+                </a>
+              ) : null
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
