@@ -1,0 +1,59 @@
+---
+import { getImage } from "astro:assets"
+import { getCollection } from "astro:content"
+
+import Section from "@/components/layout/Section.astro"
+import { ProjectsCarousel } from "@/components/projects/projects-carousel"
+import Contact from "@/components/sections/Contact.astro"
+import Hero from "@/components/sections/Hero.astro"
+import BaseLayout from "@/layouts/BaseLayout.astro"
+
+const coverWidths = [640, 960, 1280, 1600]
+
+const entries = await getCollection("projects")
+const projects = await Promise.all(
+  entries
+    .slice()
+    .sort((a, b) => a.data.order - b.data.order)
+    .map(async (entry) => {
+      const cover = await getImage({
+        src: entry.data.image,
+        width: 1600,
+        widths: coverWidths,
+        format: "webp",
+        quality: 80,
+      })
+
+      return {
+        title: entry.data.title,
+        slug: entry.data.slug,
+        image: {
+          src: cover.src,
+          srcSet: cover.srcSet.attribute,
+        },
+      }
+    })
+)
+---
+
+<BaseLayout>
+  <main class="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
+    <div
+      class="flex w-full max-w-2xl flex-col items-start justify-center gap-5 text-left"
+    >
+      <Hero />
+      <Section label="Projects">
+        {
+          projects.length > 0 ? (
+            <ProjectsCarousel client:load projects={projects} />
+          ) : (
+            <p class="lowercase text-sm text-muted-foreground">
+              no projects available
+            </p>
+          )
+        }
+      </Section>
+      <Contact />
+    </div>
+  </main>
+</BaseLayout>

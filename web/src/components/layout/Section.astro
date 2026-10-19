@@ -1,0 +1,14 @@
+---
+type Props = {
+  label: string
+}
+
+const { label } = Astro.props
+---
+
+<section class="flex w-full flex-col items-start gap-2">
+  <h2 class="font-heading text-xl font-medium text-foreground lowercase sm:text-2xl">
+    {label}
+  </h2>
+  <div class="w-full"><slot /></div>
+</section>
