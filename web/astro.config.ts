@@ -5,7 +5,7 @@ import react from "@astrojs/react"
 import tailwindcss from "@tailwindcss/vite"
 import type { AstroIntegration } from "astro"
 import { defineConfig } from "astro/config"
-import { loadEnv } from "vite"
+import { loadEnv, type Plugin } from "vite"
 
 import { checkEnv } from "./scripts/check-env"
 import { checkProjects } from "./scripts/check-projects"
@@ -13,8 +13,6 @@ import { checkProjects } from "./scripts/check-projects"
 const projectsDir = fileURLToPath(
   new URL("./src/content/projects", import.meta.url)
 )
-
-const envDir = fileURLToPath(new URL("./", import.meta.url))
 
 function contentIntegrity(): AstroIntegration {
   return {
@@ -35,22 +33,21 @@ function contentIntegrity(): AstroIntegration {
   }
 }
 
-function requiredEnv(): AstroIntegration {
+function requiredEnv(): Plugin {
   return {
     name: "required-env",
-    hooks: {
-      "astro:build:start": () => {
-        const env = loadEnv("production", envDir, "PUBLIC_")
-        const errors = checkEnv(env)
+    apply: "build",
+    configResolved(config) {
+      const env = loadEnv(config.mode, config.envDir, "PUBLIC_")
+      const errors = checkEnv(env)
 
-        if (errors.length > 0) {
-          throw new Error(
-            `Required environment variables check failed:\n${errors
-              .map((error) => `- ${error}`)
-              .join("\n")}\nCopy web/.env.example to web/.env and fill in the values.`
-          )
-        }
-      },
+      if (errors.length > 0) {
+        throw new Error(
+          `Required environment variables check failed:\n${errors
+            .map((error) => `- ${error}`)
+            .join("\n")}\nCopy web/.env.example to web/.env and fill in the values.`
+        )
+      }
     },
   }
 }
@@ -58,8 +55,8 @@ function requiredEnv(): AstroIntegration {
 export default defineConfig({
   site: "https://hryhorchuk.vercel.app",
   trailingSlash: "ignore",
-  integrations: [mdx(), react(), contentIntegrity(), requiredEnv()],
+  integrations: [mdx(), react(), contentIntegrity()],
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), requiredEnv()],
   },
 })
