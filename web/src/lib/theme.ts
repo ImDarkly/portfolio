@@ -8,6 +8,22 @@ function isTheme(value: string | null): value is Theme {
   return value !== null && (THEME_VALUES as readonly string[]).includes(value)
 }
 
+function readStoredTheme(storageKey: string): string | null {
+  try {
+    return localStorage.getItem(storageKey)
+  } catch {
+    return null
+  }
+}
+
+function writeStoredTheme(storageKey: string, theme: Theme) {
+  try {
+    localStorage.setItem(storageKey, theme)
+  } catch {
+    return
+  }
+}
+
 function getSystemTheme(): ResolvedTheme {
   return window.matchMedia(COLOR_SCHEME_QUERY).matches ? "dark" : "light"
 }
@@ -60,7 +76,7 @@ export function startTheme(
   storageKey = "theme",
   defaultTheme: Theme = "system"
 ) {
-  const storedTheme = localStorage.getItem(storageKey)
+  const storedTheme = readStoredTheme(storageKey)
   let theme: Theme = isTheme(storedTheme) ? storedTheme : defaultTheme
 
   applyTheme(theme)
@@ -98,12 +114,16 @@ export function startTheme(
             ? "light"
             : "dark"
 
-    localStorage.setItem(storageKey, theme)
+    writeStoredTheme(storageKey, theme)
     applyTheme(theme)
   })
 
   window.addEventListener("storage", (event) => {
-    if (event.storageArea !== localStorage) {
+    try {
+      if (event.storageArea !== localStorage) {
+        return
+      }
+    } catch {
       return
     }
 

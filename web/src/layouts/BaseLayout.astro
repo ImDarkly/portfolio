@@ -1,5 +1,7 @@
 ---
 import "@/styles/global.css"
+
+const canonicalUrl = Astro.url.href.replace(/\/$/, "")
 ---
 
 <!doctype html>
@@ -15,7 +17,7 @@ import "@/styles/global.css"
       content="Portfolio of Oleksandr Hryhorchuk"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://hryhorchuk.vercel.app" />
+    <meta property="og:url" content={canonicalUrl} />
     <script>
       import { startFaviconBlink } from "@/favicon"
       import { startTheme } from "@/lib/theme"
