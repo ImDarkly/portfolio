@@ -50,14 +50,14 @@ npm install
 
 ### Environment Variables
 
-Create `src/.env`:
+Create `web/.env` (see `web/.env.example`):
 ```
-VITE_SANITY_PROJECT_ID=your_project_id
-VITE_SANITY_DATASET=production
-VITE_PUBLIC_GITHUB=https://github.com/your-handle
-VITE_PUBLIC_LINKEDIN=https://www.linkedin.com/in/your-handle
-VITE_PUBLIC_EMAIL=you@example.com
+PUBLIC_GITHUB=https://github.com/your-handle
+PUBLIC_LINKEDIN=https://www.linkedin.com/in/your-handle
+PUBLIC_EMAIL=you@example.com
 ```
+
+All three are required for production builds; the build fails if any is missing or empty.
 
 ### Development
 
