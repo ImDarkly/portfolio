@@ -1,7 +1,20 @@
 ---
 import "@/styles/global.css"
 
+interface Props {
+  title?: string
+  description?: string
+  image?: string
+}
+
+const {
+  title = "Oleksandr Hryhorchuk",
+  description = "Portfolio of Oleksandr Hryhorchuk",
+  image = "/preview.jpg",
+} = Astro.props
+
 const canonicalUrl = Astro.url.href.replace(/\/$/, "")
+const ogImageUrl = new URL(image, Astro.site ?? Astro.url).href
 ---
 
 <!doctype html>
@@ -10,14 +23,15 @@ const canonicalUrl = Astro.url.href.replace(/\/$/, "")
     <meta charset="UTF-8" />
     <link rel="icon" href="data:," />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Oleksandr Hryhorchuk</title>
-    <meta property="og:title" content="Oleksandr Hryhorchuk" />
-    <meta
-      property="og:description"
-      content="Portfolio of Oleksandr Hryhorchuk"
-    />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <script>
       import { startFaviconBlink } from "@/favicon"
       import { startTheme } from "@/lib/theme"

@@ -1,5 +1,5 @@
 ---
-import { Image } from "astro:assets"
+import { getImage, Image } from "astro:assets"
 import { getCollection } from "astro:content"
 
 import ArrowLeftLine from "@/components/icons/ArrowLeftLine.astro"
@@ -17,9 +17,18 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { title, description, note, tech, image, githubUrl, liveUrl } = entry.data
+
+const ogImage = await getImage({
+  src: image,
+  width: 1200,
+  height: 630,
+  fit: "cover",
+  format: "jpg",
+  quality: 82,
+})
 ---
 
-<BaseLayout>
+<BaseLayout title={title} description={description} image={ogImage.src}>
   <main class="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
     <div class="flex w-full max-w-2xl flex-col gap-5 text-left">
       <a
