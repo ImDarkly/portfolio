@@ -5,3 +5,4 @@ dist
 .env
 .agents
 skills-lock.json
+sanity-export.tar.gz

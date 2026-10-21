@@ -1,8 +1,8 @@
-A portfolio website built with React, TypeScript, Vite, and Sanity CMS.
+A portfolio website built with Astro, React, TypeScript, Tailwind CSS, and MDX.
 
 ## Overview
 
-Frontend portfolio with a carousel of projects managed through Sanity CMS. Deployed as a static site.
+Static portfolio with a carousel of featured projects. Projects are authored as MDX files and rendered at build time. Deployed as a static site.
 
 ### Live
 
@@ -10,47 +10,47 @@ Frontend portfolio with a carousel of projects managed through Sanity CMS. Deplo
 
 ### Stack
 
-React 19, TypeScript, Vite, Tailwind CSS 4, Sanity, Embla Carousel
+Astro 7, React 19 (carousel island), TypeScript, Tailwind CSS 4, MDX, Embla Carousel
 
 ## Project Structure
 
 ```
-portfolio-v2/
-├── src/                    # Frontend application
-│   ├── src/
-│   │   ├── components/    # React components
-│   │   ├── pages/         # Page components
-│   │   ├── hooks/         # Custom hooks
-│   │   ├── lib/           # Utilities (Sanity client)
-│   │   └── index.css      # Global styles
-│   ├── package.json
-│   └── vite.config.ts
-│
-├── studio/                 # Sanity Studio CMS
-│   ├── schemaTypes/       # Content schemas
-│   └── sanity.config.ts
-│
-└── package.json           # Workspace root
+portfolio/
+└── web/
+    ├── public/                 # Static assets
+    ├── scripts/                # Build-time content and env checks
+    ├── src/
+    │   ├── components/        # Astro components and React islands
+    │   ├── content/projects/  # Project MDX files and covers
+    │   ├── layouts/           # Page layouts
+    │   ├── lib/               # Utilities
+    │   ├── pages/             # Routes
+    │   ├── styles/            # Global styles
+    │   └── content.config.ts  # Content collection schema
+    ├── test/                   # Vitest tests
+    ├── astro.config.ts
+    └── package.json
 ```
 
 ## Getting Started
 
 ### Prerequisites
 
-- Node.js 20.x
+- Node.js 22.22+
 - npm 10.9.4+
 
 ### Installation
 
 ```bash
 git clone <repo>
-cd portfolio-v2
+cd portfolio/web
 npm install
 ```
 
 ### Environment Variables
 
 Create `web/.env` (see `web/.env.example`):
+
 ```
 PUBLIC_GITHUB=https://github.com/your-handle
 PUBLIC_LINKEDIN=https://www.linkedin.com/in/your-handle
@@ -62,85 +62,86 @@ All three are required for production builds; the build fails if any is missing 
 ### Development
 
 ```bash
-# Frontend
-cd src && npm run dev
-
-# Sanity Studio (separate terminal)
-cd studio && npm run dev
+cd web
+npm run dev
 ```
 
-### Frontend URL
-
-http://localhost:5173
-
-### Studio URL
-
-http://localhost:3333
+The dev server runs at http://localhost:4321.
 
 ### Build
 
 ```bash
-cd src && npm run build
-cd studio && npm run build
+cd web
+npm run build
 ```
 
 ### Commands
 
-#### Frontend
+Run from `web/`:
 
 - `npm run dev` — Dev server
 - `npm run build` — Production build
-- `npm run lint` — ESLint
-- `npm run format` — Prettier
+- `npm run preview` — Preview the production build
+- `npm run check` — Astro type check
 - `npm run test` — Vitest
-
-#### Studio
-
-- `npm run deploy` — Deploy to Sanity
+- `npm run sync` — Generate Astro content types
 
 ## Adding Projects
 
-Projects are managed in Sanity Studio. Required fields:
+Add an MDX file to `web/src/content/projects/` and a cover image next to it. The slug is explicit and must be lowercase kebab-case.
+
+```mdx
+---
+title: "Project Name"
+description: "Short description."
+tech: ["TypeScript", "Astro"]
+image: ./project-cover.png
+githubUrl: "https://github.com/you/project"
+liveUrl: "https://project.example.com"
+note: "Optional note"
+order: 1
+slug: "project-name"
+---
+```
 
 | Field | Type |
 |-------|------|
-| Title | String |
-| Description | Text |
-| Tech Stack | Array |
-| Image | Image |
-| GitHub URL | URL |
-| Live URL | URL (optional) |
-| Note | String (optional) |
-| Order | Number |
+| `title` | String |
+| `description` | String |
+| `tech` | Array of strings (at least one) |
+| `image` | Local image import |
+| `githubUrl` | URL |
+| `liveUrl` | URL (optional) |
+| `note` | String (optional) |
+| `order` | Positive integer |
+| `slug` | Lowercase kebab-case string |
+
+The build fails if a project is missing required fields, uses a duplicate slug, or references a missing image.
 
 ## Routing
 
 - `/` — Home page
-- `/project/:slug` — Project detail (slug auto-generated from title)
+- `/project/<slug>` — Project detail
+- `/404` — Not found
 
 ## Deployment
 
-### Frontend (Vercel)
+### Vercel
 
-1. Connect repo to Vercel
-2. Add environment variables
-3. Deploy
-
-### Studio
-
-```bash
-cd studio && npm run deploy
-```
+1. Set the project root directory to `web`.
+2. Set the Node.js version to 22.
+3. Add the `PUBLIC_GITHUB`, `PUBLIC_LINKEDIN`, and `PUBLIC_EMAIL` environment variables.
+4. Deploy.
 
 ## Troubleshooting
 
 ### Projects not showing
 
-- Check `VITE_SANITY_PROJECT_ID` and `VITE_SANITY_DATASET` in `.env`
-- Verify projects exist in Sanity Studio
-- Restart dev server
+- Check that the MDX file is in `web/src/content/projects/`.
+- Verify the frontmatter matches the schema in `web/src/content.config.ts`.
+- Restart the dev server.
 
-### Sanity connection fails
+### Build fails on environment variables
 
-- Check internet connection
-- Verify `.env` variables are correct
+- Create `web/.env` with all three `PUBLIC_` variables.
+- Ensure none of the values are empty.
