@@ -6,6 +6,7 @@ import Section from "@/components/layout/Section.astro"
 import { ProjectsCarousel } from "@/components/projects/projects-carousel"
 import Contact from "@/components/sections/Contact.astro"
 import Hero from "@/components/sections/Hero.astro"
+import Skills from "@/components/sections/Skills.astro"
 import BaseLayout from "@/layouts/BaseLayout.astro"
 
 const coverWidths = [640, 960, 1280, 1600]
@@ -42,6 +43,7 @@ const projects = await Promise.all(
       class="flex w-full max-w-2xl flex-col items-start justify-center gap-5 text-left"
     >
       <Hero />
+      <Skills />
       <Section label="Projects">
         {
           projects.length > 0 ? (
