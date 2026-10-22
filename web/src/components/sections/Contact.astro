@@ -1,11 +1,14 @@
 ---
 import Section from "@/components/layout/Section.astro"
+import { buttonVariants } from "@/components/ui/button"
 
 type ContactLink = {
   label: string
   href: string
   external?: boolean
 }
+
+const email = import.meta.env.PUBLIC_EMAIL ?? ""
 
 const contactLinks: ContactLink[] = [
   {
@@ -19,27 +22,67 @@ const contactLinks: ContactLink[] = [
     external: true,
   },
   {
-    label: import.meta.env.PUBLIC_EMAIL ?? "",
-    href: import.meta.env.PUBLIC_EMAIL ?? "",
+    label: email,
+    href: email,
   },
 ].filter((link) => link.href.length > 0)
 ---
 
-<Section label="contact">
-  <div
-    class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-normal sm:text-base"
-  >
-    {
-      contactLinks.map((link) => (
-        <a
-          class="text-foreground underline decoration-foreground/30 underline-offset-2 transition-colors hover:text-primary hover:decoration-primary"
-          href={link.external ? link.href : `mailto:${link.href}`}
-          rel={link.external ? "noreferrer" : undefined}
-          target={link.external ? "_blank" : undefined}
-        >
-          {link.label}
-        </a>
-      ))
-    }
-  </div>
-</Section>
+<div id="contact">
+  <Section label="contact">
+    <p class="mb-2 text-sm text-muted-foreground sm:text-base">
+      available for frontend roles, remote or tenerife. fastest reply by email.
+    </p>
+    <div
+      class="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm font-normal sm:text-base"
+    >
+      {
+        contactLinks.map((link) => (
+          <a
+            class="text-foreground underline decoration-foreground/30 underline-offset-2 transition-colors hover:text-primary hover:decoration-primary"
+            href={link.external ? link.href : `mailto:${link.href}`}
+            rel={link.external ? "noreferrer" : undefined}
+            target={link.external ? "_blank" : undefined}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      {
+        email && (
+          <button
+            type="button"
+            class={buttonVariants({ variant: "outline", size: "xs" })}
+            data-copy-email={email}
+            aria-label="copy email address"
+          >
+            copy
+          </button>
+        )
+      }
+    </div>
+  </Section>
+</div>
+
+<script>
+  document.querySelectorAll("[data-copy-email]").forEach((button) => {
+    let resetTimer = 0
+
+    button.addEventListener("click", async () => {
+      const email = button.getAttribute("data-copy-email")
+      if (!email) return
+
+      try {
+        await navigator.clipboard.writeText(email)
+      } catch {
+        return
+      }
+
+      window.clearTimeout(resetTimer)
+      button.textContent = "copied"
+      resetTimer = window.setTimeout(() => {
+        button.textContent = "copy"
+      }, 1500)
+    })
+  })
+</script>
