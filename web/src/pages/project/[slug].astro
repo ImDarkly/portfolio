@@ -4,6 +4,7 @@ import { getCollection } from "astro:content"
 
 import ArrowLeftLine from "@/components/icons/ArrowLeftLine.astro"
 import ArrowRightLine from "@/components/icons/ArrowRightLine.astro"
+import TechTag from "@/components/ui/TechTag.astro"
 import BaseLayout from "@/layouts/BaseLayout.astro"
 
 export async function getStaticPaths() {
@@ -77,11 +78,7 @@ const ogImage = await getImage({
 
           <div class="flex flex-wrap gap-2">
             {
-              tech.map((item) => (
-                <span class="border border-border px-2 py-1 font-heading text-[11px] text-foreground lowercase">
-                  {item}
-                </span>
-              ))
+              tech.map((item) => <TechTag label={item} />)
             }
           </div>
 

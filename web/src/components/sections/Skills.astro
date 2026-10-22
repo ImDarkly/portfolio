@@ -1,0 +1,26 @@
+---
+import Section from "@/components/layout/Section.astro"
+import TechTag from "@/components/ui/TechTag.astro"
+
+const skills = [
+  "typescript",
+  "javascript",
+  "react",
+  "next.js",
+  "astro",
+  "tailwind css",
+  "zustand",
+  "framer motion",
+  "node.js",
+  "websockets",
+  "cloudflare workers",
+  "postgresql",
+  "supabase",
+]
+---
+
+<Section label="skills">
+  <div class="flex flex-wrap gap-2">
+    {skills.map((skill) => <TechTag label={skill} />)}
+  </div>
+</Section>
