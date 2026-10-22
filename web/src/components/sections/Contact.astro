@@ -66,6 +66,8 @@ const contactLinks: ContactLink[] = [
 
 <script>
   document.querySelectorAll("[data-copy-email]").forEach((button) => {
+    let resetTimer = 0
+
     button.addEventListener("click", async () => {
       const email = button.getAttribute("data-copy-email")
       if (!email) return
@@ -76,10 +78,10 @@ const contactLinks: ContactLink[] = [
         return
       }
 
-      const label = button.textContent
+      window.clearTimeout(resetTimer)
       button.textContent = "copied"
-      window.setTimeout(() => {
-        button.textContent = label
+      resetTimer = window.setTimeout(() => {
+        button.textContent = "copy"
       }, 1500)
     })
   })
