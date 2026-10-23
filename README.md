@@ -83,6 +83,7 @@ Run from `web/`:
 - `npm run build` — Production build
 - `npm run preview` — Preview the production build
 - `npm run check` — Astro type check
+- `npm run lint` — ESLint
 - `npm run test` — Vitest
 - `npm run sync` — Generate Astro content types
 
