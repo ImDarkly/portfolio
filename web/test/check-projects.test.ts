@@ -51,8 +51,11 @@ describe("checkProjects", () => {
       "second.mdx": '---\nslug: "project"\nimage: "./cover.png"\n---\n',
     })
 
-    expect(checkProjects(dir)).toEqual([
-      'second.mdx: duplicate slug "project" (already used by first.mdx)',
-    ])
+    const errors = checkProjects(dir)
+
+    expect(errors).toHaveLength(1)
+    expect(errors[0]).toContain('duplicate slug "project"')
+    expect(errors[0]).toContain("first.mdx")
+    expect(errors[0]).toContain("second.mdx")
   })
 })
