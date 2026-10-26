@@ -15,6 +15,7 @@ const entries = await getCollection("projects")
 const projects = await Promise.all(
   entries
     .slice()
+    .filter((entry) => !entry.data.hideFromHome)
     .sort((a, b) => a.data.order - b.data.order)
     .map(async (entry) => {
       const cover = await getImage({
@@ -28,6 +29,7 @@ const projects = await Promise.all(
       return {
         title: entry.data.title,
         slug: entry.data.slug,
+        summary: entry.data.summary,
         image: {
           src: cover.src,
           srcSet: cover.srcSet.attribute,

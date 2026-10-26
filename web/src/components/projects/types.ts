@@ -6,5 +6,6 @@ export type ProjectImage = {
 export type ProjectCard = {
   title: string
   slug: string
+  summary: string
   image: ProjectImage
 }
