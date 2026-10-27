@@ -2,11 +2,16 @@
 title: "Mova"
 description: "Real-time multiplayer browser-based tile word game for 2-4 players inspired by Scrabble. Players share a game board, place tiles, form words, and earn points in real-time synchronization."
 summary: "Real-time multiplayer word tile game"
-tech: ["React", "TypeScript", "Vite", "PartyKit", "dnd-kit", "Tailwind CSS"]
+tech: ["React", "TypeScript", "Vite", "PartyServer", "Cloudflare Workers", "dnd-kit", "Tailwind CSS"]
 image: ./mova-cover.png
 liveUrl: "https://mova-1l9.pages.dev/"
 githubUrl: "https://github.com/ImDarkly/mova"
-note: "Active development"
+note: "Independent project, in active development"
 order: 2
 slug: "mova"
 ---
+
+- The server owns all game state — bag, racks, board, scores and turn order — and validates every placement.
+- Clients send actions over WebSockets instead of changing game state directly; the server replies with authoritative state.
+- Players drag tiles from their rack onto the board, and invalid placements return a specific error.
+- No account needed: create a room, share the 6-character link, and play in the browser.
