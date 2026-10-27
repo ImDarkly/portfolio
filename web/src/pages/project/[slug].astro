@@ -1,6 +1,6 @@
 ---
 import { getImage, Image } from "astro:assets"
-import { getCollection } from "astro:content"
+import { getCollection, render } from "astro:content"
 
 import ArrowLeftLine from "@/components/icons/ArrowLeftLine.astro"
 import ArrowRightLine from "@/components/icons/ArrowRightLine.astro"
@@ -18,6 +18,8 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { title, description, note, tech, image, githubUrl, liveUrl } = entry.data
+const { Content } = await render(entry)
+const hasBody = Boolean(entry.body?.trim())
 
 const ogImage = await getImage({
   src: image,
@@ -73,6 +75,16 @@ const ogImage = await getImage({
               >
                 {note}
               </p>
+            ) : null
+          }
+
+          {
+            hasBody ? (
+              <div
+                class="max-w-3xl font-sans text-sm leading-6 text-muted-foreground [&_li]:mt-1 [&_ul]:list-disc [&_ul]:pl-5"
+              >
+                <Content />
+              </div>
             ) : null
           }
 
