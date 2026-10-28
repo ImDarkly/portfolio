@@ -42,21 +42,23 @@ const projects = await Promise.all(
 <BaseLayout>
   <main class="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
     <div
-      class="flex w-full max-w-2xl flex-col items-start justify-center gap-5 text-left"
+      class="flex w-full max-w-2xl flex-col items-start justify-center gap-5 text-left lg:grid lg:max-w-5xl lg:grid-cols-2 lg:gap-x-10"
     >
       <Hero />
       <Skills />
-      <Section label="Projects">
-        {
-          projects.length > 0 ? (
-            <ProjectsCarousel client:load projects={projects} />
-          ) : (
-            <p class="lowercase text-sm text-muted-foreground">
-              no projects available
-            </p>
-          )
-        }
-      </Section>
+      <div class="w-full lg:col-start-2 lg:row-span-3 lg:row-start-1">
+        <Section label="Projects">
+          {
+            projects.length > 0 ? (
+              <ProjectsCarousel client:load projects={projects} />
+            ) : (
+              <p class="lowercase text-sm text-muted-foreground">
+                no projects available
+              </p>
+            )
+          }
+        </Section>
+      </div>
       <Contact />
     </div>
   </main>
