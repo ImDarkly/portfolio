@@ -51,7 +51,7 @@ const projects = await Promise.all(
         <Skills />
       </div>
       <div class="w-full lg:col-start-2 lg:row-span-5 lg:row-start-1">
-        <Section label="Projects">
+        <Section label="Projects" hideHeading>
           {
             projects.length > 0 ? (
               <ProjectsCarousel client:load projects={projects} />
