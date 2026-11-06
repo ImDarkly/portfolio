@@ -1,13 +1,19 @@
 ---
 type Props = {
   label: string
+  hideHeading?: boolean
 }
 
-const { label } = Astro.props
+const { label, hideHeading = false } = Astro.props
 ---
 
 <section class="flex w-full flex-col items-start gap-2">
-  <h2 class="font-heading text-xl font-medium text-foreground lowercase sm:text-2xl">
+  <h2
+    class:list={[
+      "font-heading text-xl font-medium text-foreground lowercase sm:text-2xl",
+      hideHeading && "sr-only",
+    ]}
+  >
     {label}
   </h2>
   <div class="w-full"><slot /></div>

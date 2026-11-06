@@ -42,11 +42,15 @@ const projects = await Promise.all(
 <BaseLayout>
   <main class="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
     <div
-      class="flex w-full max-w-2xl flex-col items-start justify-center gap-5 text-left lg:grid lg:max-w-5xl lg:grid-cols-2 lg:gap-x-10"
+      class="flex w-full max-w-2xl flex-col items-start justify-center gap-4 text-left lg:grid lg:max-w-5xl lg:grid-cols-2 lg:grid-rows-[1fr_auto_auto_auto_1fr] lg:gap-x-10"
     >
-      <Hero />
-      <Skills />
-      <div class="w-full lg:col-start-2 lg:row-span-3 lg:row-start-1">
+      <div class="w-full lg:col-start-1 lg:row-start-2">
+        <Hero />
+      </div>
+      <div class="w-full lg:col-start-1 lg:row-start-3">
+        <Skills />
+      </div>
+      <div class="w-full lg:col-start-2 lg:row-span-5 lg:row-start-1">
         <Section label="Projects">
           {
             projects.length > 0 ? (
@@ -59,7 +63,9 @@ const projects = await Promise.all(
           }
         </Section>
       </div>
-      <Contact />
+      <div class="w-full lg:col-start-1 lg:row-start-4">
+        <Contact />
+      </div>
     </div>
   </main>
 </BaseLayout>
