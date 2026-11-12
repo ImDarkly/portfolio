@@ -9,3 +9,7 @@ githubUrl: "https://github.com/ImDarkly/skattjakt"
 order: 3
 slug: "skattjakt"
 ---
+
+- Built a 5x5 bingo generator that fills the card from eligible Minecraft items, with rarity slots so a card can lean toward common, rare or epic items.
+- Made the generator backfill empty rarity slots from lower tiers, so a short item pool still produces a full card instead of a partial one; keeping the card full when a rarity pool runs dry was the hard part.
+- Encoded the card into the share URL and kept card history, favourites and item settings in localStorage through the Zustand store.

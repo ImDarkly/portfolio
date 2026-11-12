@@ -9,3 +9,7 @@ githubUrl: "https://github.com/ImDarkly/rollify"
 order: 4
 slug: "rollify"
 ---
+
+- Built custom dice with min/max ranges and a per-die multiplier, plus a lock that freezes a die's value between rolls.
+- Layered undo/redo and localStorage persistence over the same Zustand store using zundo's temporal middleware; making both wrappers agree on one dice list was the tricky part.
+- Used dnd-kit with a distance-based activation constraint and a touch sensor on coarse pointers, so drag reordering does not swallow taps on mobile.

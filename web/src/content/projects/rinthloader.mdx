@@ -9,3 +9,7 @@ githubUrl: "https://github.com/ImDarkly/rinthloader"
 order: 5
 slug: "rinthloader"
 ---
+
+- Built a Next.js app that turns a pasted list of mod names into one zip download from Modrinth.
+- Validated mod slugs in chunks of five before download, so a long list did not flood the Modrinth API and missing names could be skipped instead of failing the whole batch.
+- Streamed the zip from a route handler while fetching each mod, so the response starts before every file is in memory.
