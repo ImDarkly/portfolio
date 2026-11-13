@@ -25,6 +25,10 @@ export function CarouselFraction() {
     }
   }, [api])
 
+  if (totalSlides === 0) {
+    return null
+  }
+
   return (
     <p className="font-heading text-xs text-muted-foreground sm:text-sm">
       {currentSlide} / {totalSlides}

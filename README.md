@@ -95,12 +95,14 @@ Add an MDX file to `web/src/content/projects/` and a cover image next to it. The
 ---
 title: "Project Name"
 description: "Short description."
+summary: "One-line caption."
 tech: ["TypeScript", "Astro"]
 image: ./project-cover.png
 githubUrl: "https://github.com/you/project"
 liveUrl: "https://project.example.com"
 note: "Optional note"
 order: 1
+hideFromHome: false
 slug: "project-name"
 ---
 ```
@@ -109,12 +111,14 @@ slug: "project-name"
 |-------|------|
 | `title` | String |
 | `description` | String |
+| `summary` | String (required, one-line caption shown under the project in the home carousel) |
 | `tech` | Array of strings (at least one) |
 | `image` | Local image import |
 | `githubUrl` | URL |
 | `liveUrl` | URL (optional) |
 | `note` | String (optional) |
 | `order` | Positive integer |
+| `hideFromHome` | Boolean (optional, default `false`) |
 | `slug` | Lowercase kebab-case string |
 
 The build fails if a project is missing required fields, uses a duplicate slug, or references a missing image.
