@@ -1,4 +1,5 @@
 ---
+const email = import.meta.env.PUBLIC_EMAIL ?? ""
 ---
 
 <section class="flex w-full flex-col items-start gap-2">
@@ -17,7 +18,7 @@
     apps, independently and in teams. i'm{" "}
     <a
       class="text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:decoration-primary"
-      href="#contact">open to frontend roles</a
+      href={`mailto:${email}`}>open to frontend roles</a
     >, remote or in tenerife.
   </p>
 </section>
