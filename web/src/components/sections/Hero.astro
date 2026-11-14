@@ -1,5 +1,6 @@
 ---
 const email = import.meta.env.PUBLIC_EMAIL ?? ""
+const currently = "currently: job hunting, shipping chum!"
 ---
 
 <section class="flex w-full flex-col items-start gap-2">
@@ -20,5 +21,10 @@ const email = import.meta.env.PUBLIC_EMAIL ?? ""
       class="text-primary underline decoration-primary/30 underline-offset-2 transition-colors hover:decoration-primary"
       href={`mailto:${email}`}>open to frontend roles</a
     >, remote or in tenerife.
+  </p>
+  <p
+    class="max-w-prose font-sans text-sm leading-6 text-muted-foreground lowercase sm:text-base"
+  >
+    {currently}
   </p>
 </section>
