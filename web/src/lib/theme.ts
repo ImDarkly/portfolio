@@ -1,7 +1,7 @@
 const COLOR_SCHEME_QUERY = "(prefers-color-scheme: dark)"
 const THEME_VALUES = ["dark", "light", "system"] as const
 
-type Theme = (typeof THEME_VALUES)[number]
+export type Theme = (typeof THEME_VALUES)[number]
 type ResolvedTheme = "dark" | "light"
 
 function isTheme(value: string | null): value is Theme {
@@ -72,18 +72,37 @@ function isEditableTarget(target: EventTarget | null) {
   )
 }
 
+let activeStorageKey = "theme"
+let currentTheme: Theme = "system"
+
+export function getTheme() {
+  return currentTheme
+}
+
+function commitTheme(next: Theme) {
+  currentTheme = next
+  applyTheme(next)
+  window.dispatchEvent(new Event("themechange"))
+}
+
+export function setTheme(next: Theme) {
+  writeStoredTheme(activeStorageKey, next)
+  commitTheme(next)
+}
+
 export function startTheme(
   storageKey = "theme",
   defaultTheme: Theme = "system"
 ) {
+  activeStorageKey = storageKey
   const storedTheme = readStoredTheme(storageKey)
-  let theme: Theme = isTheme(storedTheme) ? storedTheme : defaultTheme
+  currentTheme = isTheme(storedTheme) ? storedTheme : defaultTheme
 
-  applyTheme(theme)
+  applyTheme(currentTheme)
 
   const mediaQuery = window.matchMedia(COLOR_SCHEME_QUERY)
   mediaQuery.addEventListener("change", () => {
-    if (theme === "system") {
+    if (currentTheme === "system") {
       applyTheme("system")
     }
   })
@@ -105,17 +124,15 @@ export function startTheme(
       return
     }
 
-    theme =
-      theme === "dark"
+    setTheme(
+      currentTheme === "dark"
         ? "light"
-        : theme === "light"
+        : currentTheme === "light"
           ? "dark"
           : getSystemTheme() === "dark"
             ? "light"
             : "dark"
-
-    writeStoredTheme(storageKey, theme)
-    applyTheme(theme)
+    )
   })
 
   window.addEventListener("storage", (event) => {
@@ -131,7 +148,6 @@ export function startTheme(
       return
     }
 
-    theme = isTheme(event.newValue) ? event.newValue : defaultTheme
-    applyTheme(theme)
+    commitTheme(isTheme(event.newValue) ? event.newValue : defaultTheme)
   })
 }

@@ -16,19 +16,23 @@ type ProjectsCarouselProps = {
 
 export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
   return (
-    <Carousel className="w-full" opts={{ loop: true }}>
+    <Carousel className="w-full" opts={{ loop: true }} aria-label="projects">
       <div className="mb-4 flex items-center justify-between">
         <CarouselFraction />
         <div className="flex gap-2">
-          <CarouselPrevious className="static translate-x-0 translate-y-0" />
-          <CarouselNext className="static translate-x-0 translate-y-0" />
+          <CarouselPrevious className="static translate-x-0 translate-y-0 max-lg:size-11" />
+          <CarouselNext className="static translate-x-0 translate-y-0 max-lg:size-11" />
         </div>
       </div>
       <div className="relative">
         <CarouselContent className="-ml-4">
-          {projects.map((project) => (
-            <CarouselItem key={project.title} className="basis-full pl-4">
-              <ProjectSlide project={project} />
+          {projects.map((project, index) => (
+            <CarouselItem
+              key={project.title}
+              className="basis-full pl-4"
+              aria-label={`${index + 1} of ${projects.length}`}
+            >
+              <ProjectSlide project={project} priority={index === 0} />
             </CarouselItem>
           ))}
         </CarouselContent>

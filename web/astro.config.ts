@@ -2,6 +2,7 @@ import { fileURLToPath } from "node:url"
 
 import mdx from "@astrojs/mdx"
 import react from "@astrojs/react"
+import sitemap from "@astrojs/sitemap"
 import tailwindcss from "@tailwindcss/vite"
 import type { AstroIntegration } from "astro"
 import { defineConfig } from "astro/config"
@@ -55,7 +56,7 @@ function requiredEnv(): Plugin {
 export default defineConfig({
   site: "https://hryhorchuk.vercel.app",
   trailingSlash: "ignore",
-  integrations: [mdx(), react(), contentIntegrity()],
+  integrations: [mdx(), react(), sitemap(), contentIntegrity()],
   vite: {
     plugins: [tailwindcss(), requiredEnv()],
   },

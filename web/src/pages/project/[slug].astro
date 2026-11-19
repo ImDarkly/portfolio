@@ -40,7 +40,7 @@ const ogImage = await getImage({
     <div class="flex w-full max-w-2xl flex-col gap-5 text-left">
       <a
         href="/"
-        class="inline-flex items-center gap-2 self-start border border-border bg-transparent px-4 py-2 font-heading text-xs text-muted-foreground lowercase transition-colors hover:text-foreground"
+        class="inline-flex items-center gap-2 self-start border border-border bg-transparent px-4 py-2 font-heading text-xs text-muted-foreground lowercase transition-colors hover:text-foreground max-lg:min-h-11"
       >
         <ArrowLeftLine />
         back home
@@ -61,7 +61,8 @@ const ogImage = await getImage({
           sizes="(min-width: 672px) 672px, calc(100vw - 2rem)"
           format="webp"
           quality={80}
-          loading="lazy"
+          loading="eager"
+          fetchpriority="high"
           class="aspect-video w-full border border-border object-cover"
         />
 
@@ -98,7 +99,7 @@ const ogImage = await getImage({
             }
           </div>
 
-          <div class="flex flex-wrap gap-3 pt-1">
+          <div class="flex flex-wrap gap-3 pt-1 max-lg:[&>a]:min-h-11">
             <a
               href={githubUrl}
               target="_blank"
@@ -114,7 +115,7 @@ const ogImage = await getImage({
                   href={liveUrl}
                   target="_blank"
                   rel="noreferrer"
-                  class="inline-flex items-center gap-2 border border-emerald-500 bg-emerald-500 px-4 py-2 font-heading text-xs text-background lowercase transition-colors hover:bg-emerald-500/90"
+                  class="inline-flex items-center gap-2 border border-primary bg-primary px-4 py-2 font-heading text-xs text-primary-foreground lowercase transition-colors hover:bg-emerald-800 dark:border-emerald-500 dark:bg-emerald-500 dark:text-background dark:hover:bg-emerald-500/90"
                 >
                   live demo
                   <ArrowRightLine />
