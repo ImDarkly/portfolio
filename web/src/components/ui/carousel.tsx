@@ -70,6 +70,21 @@ function Carousel({
     api?.scrollNext()
   }, [api])
 
+  const handleKeyDown = React.useCallback(
+    (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (event.altKey || event.ctrlKey || event.metaKey) return
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault()
+        scrollPrev()
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault()
+        scrollNext()
+      }
+    },
+    [scrollPrev, scrollNext]
+  )
+
   React.useEffect(() => {
     if (!api || !setApi) return
     setApi(api)
@@ -104,6 +119,7 @@ function Carousel({
         className={cn("relative", className)}
         role="region"
         aria-roledescription="carousel"
+        onKeyDown={handleKeyDown}
         {...props}
       >
         {children}
