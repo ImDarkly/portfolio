@@ -32,7 +32,7 @@ export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
               className="basis-full pl-4"
               aria-label={`${index + 1} of ${projects.length}`}
             >
-              <ProjectSlide project={project} />
+              <ProjectSlide project={project} priority={index === 0} />
             </CarouselItem>
           ))}
         </CarouselContent>
