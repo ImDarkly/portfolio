@@ -30,7 +30,11 @@ export function CarouselFraction() {
   }
 
   return (
-    <p className="font-heading text-xs text-muted-foreground sm:text-sm">
+    <p
+      className="font-heading text-xs text-muted-foreground sm:text-sm"
+      aria-live="polite"
+      aria-atomic="true"
+    >
       {currentSlide} / {totalSlides}
     </p>
   )
