@@ -11,6 +11,7 @@ const projects = defineCollection({
       summary: z.string().min(1),
       tech: z.array(z.string()).min(1),
       image: image(),
+      coverAlt: z.string().optional(),
       liveUrl: z.url().optional(),
       githubUrl: z.url(),
       note: z.string().optional(),
