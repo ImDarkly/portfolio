@@ -3,6 +3,7 @@ import Analytics from "@vercel/analytics/astro"
 
 import ThemeToggle from "@/components/ui/ThemeToggle.astro"
 import "@/styles/global.css"
+import { ClientRouter } from "astro:transitions"
 
 interface Props {
   title?: string
@@ -24,7 +25,7 @@ const ogImageUrl = new URL(image, Astro.site ?? Astro.url).href
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:," />
+    <link rel="icon" href="data:," transition:persist="favicon" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
@@ -41,7 +42,13 @@ const ogImageUrl = new URL(image, Astro.site ?? Astro.url).href
 
       startFaviconBlink()
       startTheme()
+
+      document.addEventListener("astro:before-swap", (event) => {
+        event.newDocument.documentElement.className =
+          document.documentElement.className
+      })
     </script>
+    <ClientRouter />
     <Analytics />
   </head>
   <body>

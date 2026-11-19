@@ -67,6 +67,7 @@ const contactLinks: ContactLink[] = [
 </div>
 
 <script>
+  document.addEventListener("astro:page-load", () => {
   document.querySelectorAll("[data-copy-email]").forEach((button) => {
     let resetTimer = 0
     const status = button.parentElement?.querySelector("[data-copy-status]")
@@ -108,5 +109,6 @@ const contactLinks: ContactLink[] = [
 
       report("copied", "email copied")
     })
+  })
   })
 </script>
