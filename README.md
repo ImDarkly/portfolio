@@ -98,6 +98,7 @@ description: "Short description."
 summary: "One-line caption."
 tech: ["TypeScript", "Astro"]
 image: ./project-cover.png
+coverAlt: "Optional description of what the cover shows"
 githubUrl: "https://github.com/you/project"
 liveUrl: "https://project.example.com"
 note: "Optional note"
@@ -114,6 +115,7 @@ slug: "project-name"
 | `summary` | String (required, one-line caption shown under the project in the home carousel) |
 | `tech` | Array of strings (at least one) |
 | `image` | Local image import |
+| `coverAlt` | String (optional, alt text for the cover on the project page; defaults to the title) |
 | `githubUrl` | URL |
 | `liveUrl` | URL (optional) |
 | `note` | String (optional) |
