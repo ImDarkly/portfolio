@@ -26,6 +26,14 @@ const contactLinks: ContactLink[] = [
     href: email,
   },
 ].filter((link) => link.href.length > 0)
+
+const lastUpdated = new Date()
+  .toLocaleDateString("en-GB", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  })
+  .toLowerCase()
 ---
 
 <div id="contact">
@@ -58,6 +66,9 @@ const contactLinks: ContactLink[] = [
         )
       }
     </div>
+    <p class="mt-2 font-sans text-xs text-muted-foreground lowercase">
+      last updated: {lastUpdated}
+    </p>
   </Section>
 </div>
 
