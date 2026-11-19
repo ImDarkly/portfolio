@@ -61,6 +61,7 @@ const contactLinks: ContactLink[] = [
           </button>
         )
       }
+      <span class="sr-only" role="status" data-copy-status></span>
     </div>
   </Section>
 </div>
@@ -68,6 +69,30 @@ const contactLinks: ContactLink[] = [
 <script>
   document.querySelectorAll("[data-copy-email]").forEach((button) => {
     let resetTimer = 0
+    const status = button.parentElement?.querySelector("[data-copy-status]")
+
+    const report = (label: string, message: string) => {
+      window.clearTimeout(resetTimer)
+      button.textContent = label
+      if (status) status.textContent = message
+      resetTimer = window.setTimeout(() => {
+        button.textContent = "copy"
+        if (status) status.textContent = ""
+      }, 1500)
+    }
+
+    // Fallback when the Clipboard API is missing or denied: select the
+    // visible address so it can be copied by hand.
+    const selectEmail = () => {
+      const link = button.parentElement?.querySelector('a[href^="mailto:"]')
+      if (!link) return
+
+      const range = document.createRange()
+      range.selectNodeContents(link)
+      const selection = window.getSelection()
+      selection?.removeAllRanges()
+      selection?.addRange(range)
+    }
 
     button.addEventListener("click", async () => {
       const email = button.getAttribute("data-copy-email")
@@ -76,14 +101,12 @@ const contactLinks: ContactLink[] = [
       try {
         await navigator.clipboard.writeText(email)
       } catch {
+        selectEmail()
+        report("failed", "could not copy. email selected, press ctrl+c to copy")
         return
       }
 
-      window.clearTimeout(resetTimer)
-      button.textContent = "copied"
-      resetTimer = window.setTimeout(() => {
-        button.textContent = "copy"
-      }, 1500)
+      report("copied", "email copied")
     })
   })
 </script>

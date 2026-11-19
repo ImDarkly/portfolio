@@ -61,7 +61,8 @@ const ogImage = await getImage({
           sizes="(min-width: 672px) 672px, calc(100vw - 2rem)"
           format="webp"
           quality={80}
-          loading="lazy"
+          loading="eager"
+          fetchpriority="high"
           class="aspect-video w-full border border-border object-cover"
         />
 

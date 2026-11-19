@@ -1,0 +1,48 @@
+---
+const options = ["light", "dark", "system"]
+---
+
+<div
+  class="absolute top-4 right-4 flex items-center sm:top-6 sm:right-6"
+  role="group"
+  aria-label="theme"
+>
+  {
+    options.map((option) => (
+      <button
+        type="button"
+        data-theme-option={option}
+        aria-pressed="false"
+        class="px-2 py-1 font-heading text-xs text-muted-foreground lowercase transition-colors hover:text-foreground aria-pressed:text-foreground aria-pressed:underline aria-pressed:decoration-foreground/30 aria-pressed:underline-offset-2 max-lg:min-h-11 max-lg:min-w-11"
+      >
+        {option}
+      </button>
+    ))
+  }
+</div>
+
+<script>
+  import { getTheme, setTheme, type Theme } from "@/lib/theme"
+
+  const buttons = document.querySelectorAll<HTMLButtonElement>(
+    "[data-theme-option]"
+  )
+
+  const sync = () => {
+    buttons.forEach((button) => {
+      button.setAttribute(
+        "aria-pressed",
+        String(button.dataset.themeOption === getTheme())
+      )
+    })
+  }
+
+  buttons.forEach((button) => {
+    button.addEventListener("click", () => {
+      setTheme(button.dataset.themeOption as Theme)
+    })
+  })
+
+  window.addEventListener("themechange", sync)
+  sync()
+</script>
