@@ -7,5 +7,6 @@ export type ProjectCard = {
   title: string
   slug: string
   summary: string
+  tech: string[]
   image: ProjectImage
 }
