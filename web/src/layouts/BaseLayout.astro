@@ -39,6 +39,7 @@ const ogImageUrl = new URL(image, Astro.site ?? Astro.url).href
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <slot name="head" />
     <script>
       import { startFaviconBlink } from "@/favicon"
       import { startTheme } from "@/lib/theme"
