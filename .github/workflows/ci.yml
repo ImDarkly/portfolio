@@ -51,3 +51,6 @@ jobs:
           PUBLIC_GITHUB: https://github.com/example
           PUBLIC_LINKEDIN: https://www.linkedin.com/in/example
           PUBLIC_EMAIL: ci@example.com
+
+      - name: Lighthouse
+        run: npm run lighthouse
