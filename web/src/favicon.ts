@@ -10,20 +10,37 @@ const faviconHref = faviconFrames.map(
 let faviconIntervalId: number | undefined
 let frameIndex = 0
 
+let listening = false
+
 export function startFaviconBlink() {
   const faviconLink =
     document.querySelector<HTMLLinkElement>('link[rel="icon"]')
   if (!faviconLink) return
 
-  if (faviconIntervalId !== undefined) {
-    clearInterval(faviconIntervalId)
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)")
+
+  const sync = () => {
+    if (faviconIntervalId !== undefined) {
+      clearInterval(faviconIntervalId)
+      faviconIntervalId = undefined
+    }
+
+    frameIndex = 0
+    faviconLink.href = faviconHref[frameIndex]
+
+    if (reducedMotion.matches || document.hidden) return
+
+    faviconIntervalId = window.setInterval(() => {
+      frameIndex = (frameIndex + 1) % faviconHref.length
+      faviconLink.href = faviconHref[frameIndex]
+    }, 500)
   }
 
-  frameIndex = 0
-  faviconLink.href = faviconHref[frameIndex]
+  sync()
 
-  faviconIntervalId = window.setInterval(() => {
-    frameIndex = (frameIndex + 1) % faviconHref.length
-    faviconLink.href = faviconHref[frameIndex]
-  }, 500)
+  if (!listening) {
+    listening = true
+    reducedMotion.addEventListener("change", sync)
+    document.addEventListener("visibilitychange", sync)
+  }
 }
