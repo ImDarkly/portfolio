@@ -20,8 +20,8 @@ export function ProjectsCarousel({ projects }: ProjectsCarouselProps) {
       <div className="mb-4 flex items-center justify-between">
         <CarouselFraction />
         <div className="flex gap-2">
-          <CarouselPrevious className="static translate-x-0 translate-y-0" />
-          <CarouselNext className="static translate-x-0 translate-y-0" />
+          <CarouselPrevious className="static translate-x-0 translate-y-0 max-lg:size-11" />
+          <CarouselNext className="static translate-x-0 translate-y-0 max-lg:size-11" />
         </div>
       </div>
       <div className="relative">

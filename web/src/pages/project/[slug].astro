@@ -40,7 +40,7 @@ const ogImage = await getImage({
     <div class="flex w-full max-w-2xl flex-col gap-5 text-left">
       <a
         href="/"
-        class="inline-flex items-center gap-2 self-start border border-border bg-transparent px-4 py-2 font-heading text-xs text-muted-foreground lowercase transition-colors hover:text-foreground"
+        class="inline-flex items-center gap-2 self-start border border-border bg-transparent px-4 py-2 font-heading text-xs text-muted-foreground lowercase transition-colors hover:text-foreground max-lg:min-h-11"
       >
         <ArrowLeftLine />
         back home
@@ -98,7 +98,7 @@ const ogImage = await getImage({
             }
           </div>
 
-          <div class="flex flex-wrap gap-3 pt-1">
+          <div class="flex flex-wrap gap-3 pt-1 max-lg:[&>a]:min-h-11">
             <a
               href={githubUrl}
               target="_blank"
