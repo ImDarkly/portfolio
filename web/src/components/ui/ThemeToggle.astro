@@ -24,25 +24,26 @@ const options = ["light", "dark", "system"]
 <script>
   import { getTheme, setTheme, type Theme } from "@/lib/theme"
 
-  const buttons = document.querySelectorAll<HTMLButtonElement>(
-    "[data-theme-option]"
-  )
-
+  // The page is swapped by the router, so buttons are looked up on every sync
+  // and clicks are handled on document instead of on each button.
   const sync = () => {
-    buttons.forEach((button) => {
-      button.setAttribute(
-        "aria-pressed",
-        String(button.dataset.themeOption === getTheme())
-      )
-    })
+    document
+      .querySelectorAll<HTMLButtonElement>("[data-theme-option]")
+      .forEach((button) => {
+        button.setAttribute(
+          "aria-pressed",
+          String(button.dataset.themeOption === getTheme())
+        )
+      })
   }
 
-  buttons.forEach((button) => {
-    button.addEventListener("click", () => {
-      setTheme(button.dataset.themeOption as Theme)
-    })
+  document.addEventListener("click", (event) => {
+    const button = (event.target as Element).closest<HTMLButtonElement>(
+      "[data-theme-option]"
+    )
+    if (button) setTheme(button.dataset.themeOption as Theme)
   })
 
   window.addEventListener("themechange", sync)
-  sync()
+  document.addEventListener("astro:page-load", sync)
 </script>
