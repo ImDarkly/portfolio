@@ -40,6 +40,8 @@ const projects = await Promise.all(
         title: entry.data.title,
         slug: entry.data.slug,
         summary: entry.data.summary,
+        description: entry.data.description,
+        tech: entry.data.tech,
         image: {
           src: cover.src,
           srcSet: cover.srcSet.attribute,

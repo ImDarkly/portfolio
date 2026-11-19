@@ -7,7 +7,28 @@ type ProjectSlideProps = {
 
 export function ProjectSlide({ project, priority = false }: ProjectSlideProps) {
   return (
-    <a href={`/project/${project.slug}`} className="block w-full cursor-pointer">
+    <a
+      href={`/project/${project.slug}`}
+      className="group relative block w-full cursor-pointer"
+    >
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-10 flex aspect-[16/9] flex-col justify-end gap-2 bg-background/95 p-4 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
+      >
+        <span className="font-sans text-xs leading-5 lowercase text-foreground sm:text-sm">
+          {project.description}
+        </span>
+        <span className="flex flex-wrap gap-1.5">
+          {project.tech.map((item) => (
+            <span
+              key={item}
+              className="border border-border px-1.5 py-0.5 font-heading text-[11px] lowercase text-foreground"
+            >
+              {item}
+            </span>
+          ))}
+        </span>
+      </div>
       <img
         src={project.image.src}
         srcSet={project.image.srcSet}
