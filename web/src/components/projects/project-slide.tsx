@@ -14,8 +14,8 @@ export function ProjectSlide({ project }: ProjectSlideProps) {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 z-10 flex aspect-[16/9] flex-col justify-end gap-2 bg-background/95 p-4 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 motion-reduce:transition-none"
       >
-        <span className="font-heading text-sm font-medium lowercase text-primary">
-          {project.title}
+        <span className="font-sans text-xs leading-5 lowercase text-foreground sm:text-sm">
+          {project.description}
         </span>
         <span className="flex flex-wrap gap-1.5">
           {project.tech.map((item) => (
