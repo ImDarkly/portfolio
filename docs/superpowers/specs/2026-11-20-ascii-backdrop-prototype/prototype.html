@@ -379,14 +379,16 @@ const chum = {
 // ---------- engine ----------
 const modes = { clouds, tiles, dice, chum }
 let mode = clouds
+let last = performance.now(), sceneNow = last, dirty = true
 function setMode(name) {
   mode = modes[name] || clouds
   mode.init()
   document.getElementById("hint").textContent = "psst. " + mode.hint
-  document.querySelectorAll(".demo button").forEach((b) => b.setAttribute("aria-pressed", String(modes[b.dataset.m] === mode)))
+  document.querySelectorAll(".demo button[data-m]").forEach((b) => b.setAttribute("aria-pressed", String(modes[b.dataset.m] === mode)))
   history.replaceState(null, "", "#" + name)
+  dirty = true
 }
-document.querySelectorAll(".demo button").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.m)))
+document.querySelectorAll(".demo button[data-m]").forEach((b) => b.addEventListener("click", () => setMode(b.dataset.m)))
 
 function resize() {
   const dpr = Math.min(devicePixelRatio || 1, 2)
@@ -400,16 +402,24 @@ function resize() {
 addEventListener("scroll", buildMask, { passive: true })
 function setMask(m) {
   maskMode = m
+  dirty = true
   document.querySelectorAll("[data-mask]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mask === m)))
 }
 document.querySelectorAll("[data-mask]").forEach((b) => b.addEventListener("click", () => setMask(b.dataset.mask)))
 setMask("fade")
 
-let last = performance.now()
+// Under reduced motion the scene clock stops and only input or layout changes redraw.
+const redraw = () => { dirty = true }
+addEventListener("resize", redraw)
+reducedMQ.addEventListener("change", redraw)
 function loop(now) {
   requestAnimationFrame(loop)
   const still = reducedMQ.matches
   const dt = still ? 0 : Math.min(3, (now - last) / 16.67); last = now
+  if (!still) sceneNow = now
+  else if (!dirty) return
+  dirty = false
+  now = sceneNow
   const t = still ? 8 : now / 1000
   pointer.vx *= 0.85; pointer.vy *= 0.85
   ctx.setTransform(Math.min(devicePixelRatio || 1, 2), 0, 0, Math.min(devicePixelRatio || 1, 2), 0, 0)
@@ -423,7 +433,7 @@ addEventListener("pointermove", (e) => {
   const vx = e.clientX - pointer.x, vy = e.clientY - pointer.y
   if (Math.abs(vx) < 200) { pointer.vx = vx; pointer.vy = vy }
   pointer.x = e.clientX; pointer.y = e.clientY
-  mode.move && mode.move(performance.now())
+  if (!reducedMQ.matches) mode.move && mode.move(sceneNow)
 })
 addEventListener("pointerleave", () => { pointer.x = pointer.y = -1e4 })
 let dragged = false
@@ -436,7 +446,9 @@ addEventListener("pointerdown", (e) => {
 addEventListener("pointerup", (e) => {
   if (dragged) { mode.up(); dragged = false; return }
   if (isUI(e.target) || getSelection().toString()) return
-  mode.click && mode.click(e.clientX, e.clientY, performance.now())
+  // Reduced motion shows the click as a still frame a moment into its effect.
+  mode.click && mode.click(e.clientX, e.clientY, reducedMQ.matches ? sceneNow - 300 : performance.now())
+  redraw()
 })
 
 // theme switcher, mirroring the real site's light / dark / system
