@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import createMovaTiles from "../../src/lib/ascii/scenes/mova-tiles"
+import createMovaTiles, { WORDS } from "../../src/lib/ascii/scenes/mova-tiles"
 import type { Grid, Pointer } from "../../src/lib/ascii/types"
 
 function lcg(seed: number) {
@@ -81,9 +81,28 @@ describe("createMovaTiles", () => {
 
   it("picks only words that fit", () => {
     const scene = setup(600, 800)
+    const fitting = WORDS.filter((w) => w.replace(/ /g, "").length <= 6).map((w) => w.replace(/ /g, "").toUpperCase())
+    expect(fitting.length).toBeLessThan(WORDS.length)
+
     for (let i = 0; i < 50; i++) {
       scene.action(300, 400, 0)
-      expect(scene.tiles.filter((t) => t.target).length).toBeLessThanOrEqual(6)
+      const spelled = targets(scene).map((t) => t.ch).join("")
+      expect(fitting).toContain(spelled)
+    }
+  })
+
+  it("releases a spelled word immediately on resize", () => {
+    const scene = setup()
+    scene.spell("tenerife", 1270, 400, 0)
+    scene.resize(gridOf(400, 600))
+    for (let i = 0; i < 10; i++) scene.update(1, 100 + i * 16, idle)
+
+    expect(scene.tiles.every((t) => t.target === null)).toBe(true)
+    for (const t of scene.tiles) {
+      expect(t.x).toBeGreaterThanOrEqual(4)
+      expect(t.x).toBeLessThanOrEqual(400 - 21 - 4)
+      expect(t.y).toBeGreaterThanOrEqual(4)
+      expect(t.y).toBeLessThanOrEqual(600 - 36 - 4)
     }
   })
 

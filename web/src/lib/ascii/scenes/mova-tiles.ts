@@ -55,6 +55,13 @@ export default function createMovaTiles(rng: () => number = Math.random): Scene 
     spell,
     resize(next) {
       grid = next
+      release = 0
+      for (const tile of list) {
+        if (!tile.target) continue
+        tile.target = null
+        tile.vx = rand(-1.5, 1.5)
+        tile.vy = rand(-1.5, 1.5)
+      }
       const count = next.width < 640 ? 6 : 9
       if (list.length !== count) {
         list = Array.from({ length: count }, (_, i) => ({
