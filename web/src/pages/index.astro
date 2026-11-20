@@ -2,6 +2,7 @@
 import { getImage } from "astro:assets"
 import { getCollection } from "astro:content"
 
+import AsciiBackdrop from "@/components/ascii/AsciiBackdrop.astro"
 import Section from "@/components/layout/Section.astro"
 import { ProjectsCarousel } from "@/components/projects/projects-carousel"
 import Contact from "@/components/sections/Contact.astro"
@@ -60,7 +61,9 @@ const projects = await Promise.all(
     type="application/ld+json"
     set:html={serializeJsonLd(personData)}
   />
-  <main class="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
+  <AsciiBackdrop scene="clouds" />
+  <main
+    class="relative z-10 flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
     <div
       class="flex w-full max-w-2xl flex-col items-start justify-center gap-4 text-left lg:grid lg:max-w-5xl lg:grid-cols-2 lg:grid-rows-[1fr_auto_auto_auto_1fr] lg:gap-x-10"
     >

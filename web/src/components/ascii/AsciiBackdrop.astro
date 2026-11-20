@@ -1,0 +1,21 @@
+---
+import type { SceneName } from "@/lib/ascii/scenes"
+
+interface Props {
+  scene: SceneName
+}
+
+const { scene } = Astro.props
+---
+
+<canvas
+  data-ascii-backdrop
+  data-scene={scene}
+  aria-hidden="true"
+  class="pointer-events-none fixed inset-0 z-0 h-svh w-screen"></canvas>
+
+<script>
+  import { startBackdrops } from "@/lib/ascii/start"
+
+  startBackdrops()
+</script>
