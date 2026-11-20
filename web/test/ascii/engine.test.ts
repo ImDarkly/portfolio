@@ -1,7 +1,12 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
-import { DEMO_DELAY_MS, mountBackdrop, STILL_TIME_MS } from "../../src/lib/ascii/engine"
+import {
+  DEMO_DELAY_MS,
+  mountBackdrop,
+  REDUCED_ACTION_AGE_MS,
+  STILL_TIME_MS,
+} from "../../src/lib/ascii/engine"
 import type { Painter, Scene } from "../../src/lib/ascii/types"
 
 interface Glyph {
@@ -228,5 +233,53 @@ describe("mountBackdrop", () => {
     expect(scene.draw).not.toHaveBeenCalled()
     expect(scene.demo).not.toHaveBeenCalled()
     expect(scene.action).not.toHaveBeenCalled()
+  })
+
+  it("ages the action so the still frame shows it under reduced motion", () => {
+    const scene = makeScene()
+    const main = document.createElement("main")
+    document.body.append(main)
+    mount(scene, { reducedMotion: true })
+    scene.update.mockClear()
+    scene.draw.mockClear()
+
+    main.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: 5, clientY: 6 }))
+
+    expect(scene.action.mock.calls[0]).toEqual([5, 6, STILL_TIME_MS - REDUCED_ACTION_AGE_MS])
+    expect(scene.action.mock.calls[0][2]).toBe(7700)
+    expect(scene.update).toHaveBeenCalledTimes(1)
+    expect(scene.update.mock.calls[0].slice(0, 2)).toEqual([0, STILL_TIME_MS])
+    expect(scene.draw).toHaveBeenCalledTimes(1)
+  })
+
+  describe("pointer presence", () => {
+    function fire(type: string, extra: Record<string, unknown> = {}) {
+      const event = new MouseEvent(type, { bubbles: true, clientX: 10, clientY: 10 })
+      for (const [k, v] of Object.entries(extra)) Object.defineProperty(event, k, { value: v })
+      window.dispatchEvent(event)
+    }
+    function inside(scene: ReturnType<typeof makeScene>) {
+      flush(1)
+      return scene.update.mock.calls[scene.update.mock.calls.length - 1][2].inside
+    }
+
+    it("clears inside on pointerout with null relatedTarget", () => {
+      const scene = makeScene()
+      mount(scene)
+      fire("pointermove")
+      expect(inside(scene)).toBe(true)
+      fire("pointerout", { relatedTarget: null })
+      expect(inside(scene)).toBe(false)
+    })
+
+    it("clears inside on touch pointerup but not mouse pointerup", () => {
+      const scene = makeScene()
+      mount(scene)
+      fire("pointermove")
+      fire("pointerup", { pointerType: "mouse" })
+      expect(inside(scene)).toBe(true)
+      fire("pointerup", { pointerType: "touch" })
+      expect(inside(scene)).toBe(false)
+    })
   })
 })

@@ -11,6 +11,7 @@ export const CELL_W = 7
 export const CELL_H = 12
 export const DEMO_DELAY_MS = 1000
 export const STILL_TIME_MS = 8000
+export const REDUCED_ACTION_AGE_MS = 300
 
 const FRAME_MS = 16.67
 const MAX_JUMP = 200
@@ -153,14 +154,18 @@ export function mountBackdrop(
     pointer.inside = true
   }
 
-  const onPointerLeave = () => {
-    pointer.inside = false
+  const onPointerOut = (event: PointerEvent) => {
+    if (event.relatedTarget === null) pointer.inside = false
+  }
+
+  const onPointerEnd = (event: PointerEvent) => {
+    if (event.pointerType !== "mouse") pointer.inside = false
   }
 
   const onClick = (event: MouseEvent) => {
     if (!isEmptySpace(event.target)) return
     if (window.getSelection?.()?.toString()) return
-    scene.action(event.clientX, event.clientY, now())
+    scene.action(event.clientX, event.clientY, reduced ? STILL_TIME_MS - REDUCED_ACTION_AGE_MS : now())
     redraw()
   }
 
@@ -178,7 +183,9 @@ export function mountBackdrop(
   window.addEventListener("scroll", onScroll, passive)
   window.addEventListener("themechange", onTheme, passive)
   window.addEventListener("pointermove", onPointerMove, passive)
-  document.addEventListener("pointerleave", onPointerLeave, passive)
+  window.addEventListener("pointerout", onPointerOut, passive)
+  window.addEventListener("pointerup", onPointerEnd, passive)
+  window.addEventListener("pointercancel", onPointerEnd, passive)
   window.addEventListener("click", onClick, passive)
 
   resize()
@@ -206,7 +213,9 @@ export function mountBackdrop(
     window.removeEventListener("scroll", onScroll)
     window.removeEventListener("themechange", onTheme)
     window.removeEventListener("pointermove", onPointerMove)
-    document.removeEventListener("pointerleave", onPointerLeave)
+    window.removeEventListener("pointerout", onPointerOut)
+    window.removeEventListener("pointerup", onPointerEnd)
+    window.removeEventListener("pointercancel", onPointerEnd)
     window.removeEventListener("click", onClick)
     ctx.setTransform(1, 0, 0, 1, 0, 0)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
