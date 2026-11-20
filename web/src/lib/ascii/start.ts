@@ -32,10 +32,13 @@ export function startBackdrops({ idle = defaultIdle }: StartOptions = {}) {
     if (!canvas || !load) return
 
     idle(() => {
-      void load().then((mod) => {
-        if (current !== generation) return
-        teardown = mountBackdrop(canvas, mod.default())
-      })
+      load()
+        .then((mod) => {
+          if (current !== generation) return
+          teardown = mountBackdrop(canvas, mod.default())
+        })
+        // A failed chunk (e.g. a stale tab after a deploy) just means no backdrop.
+        .catch(() => {})
     })
   })
 

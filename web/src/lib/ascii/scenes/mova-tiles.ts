@@ -90,6 +90,13 @@ export default function createMovaTiles(rng: () => number = Math.random): Scene 
         }
       }
       for (const tile of list) {
+        if (tile.target && dt === 0) {
+          // Reduced motion: no frames will follow, so place the letter now.
+          tile.x = tile.target.x
+          tile.y = tile.target.y
+          tile.ch = tile.target.ch
+          continue
+        }
         if (tile.target) {
           tile.x += (tile.target.x - tile.x) * 0.12 * dt
           tile.y += (tile.target.y - tile.y) * 0.12 * dt

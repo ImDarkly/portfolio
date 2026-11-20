@@ -79,6 +79,19 @@ describe("createMovaTiles", () => {
     expect(scene.tiles.every((t) => t.target === null)).toBe(true)
   })
 
+  it("places the word at once when there are no frames (dt 0, reduced motion)", () => {
+    const scene = setup()
+    scene.spell("mova", 640, 400, 7700)
+    scene.update(0, 8000, idle)
+
+    const placed = scene.tiles.filter((t) => t.target)
+    expect(placed).toHaveLength(4)
+    for (const t of placed) {
+      expect(t.ch).toBe(t.target!.ch)
+      expect([t.x, t.y]).toEqual([t.target!.x, t.target!.y])
+    }
+  })
+
   it("picks only words that fit", () => {
     const scene = setup(600, 800)
     const fitting = WORDS.filter((w) => w.replace(/ /g, "").length <= 6).map((w) => w.replace(/ /g, "").toUpperCase())
