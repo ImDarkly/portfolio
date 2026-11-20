@@ -9,17 +9,18 @@ export function createNoise(rng: () => number = Math.random): (x: number, y: num
   const perm = new Uint8Array(512)
   for (let i = 0; i < 512; i++) perm[i] = p[i & 255]
 
-  const h = (i: number, j: number) => perm[(perm[i & 255] + j) & 255] / 255
-
   const value = (x: number, y: number) => {
     const xi = Math.floor(x)
     const yi = Math.floor(y)
     const xf = fade(x - xi)
     const yf = fade(y - yi)
-    const a = h(xi, yi)
-    const b = h(xi + 1, yi)
-    const c = h(xi, yi + 1)
-    const d = h(xi + 1, yi + 1)
+    // Inlined hash lookups (hot path): perm[(perm[x & 255] + y) & 255] / 255.
+    const p0 = perm[xi & 255]
+    const p1 = perm[(xi + 1) & 255]
+    const a = perm[(p0 + yi) & 255] / 255
+    const b = perm[(p1 + yi) & 255] / 255
+    const c = perm[(p0 + yi + 1) & 255] / 255
+    const d = perm[(p1 + yi + 1) & 255] / 255
     return a + (b - a) * xf + (c - a) * yf + (a - b - c + d) * xf * yf
   }
 

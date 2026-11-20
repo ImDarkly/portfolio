@@ -111,6 +111,31 @@ describe("createClouds", () => {
     })
   })
 
+  it("ignores a pointer that is barely drifting", () => {
+    const { col, row } = findDenseCell(T)
+    const scene = setup()
+    const before = scene.density(col, row, T)
+    const { x, y } = centre(col, row)
+
+    scene.update(1, T, { x, y, vx: 0.3, vy: 0.3, inside: true })
+
+    expect(scene.density(col, row, T)).toBe(before)
+  })
+
+  it("keeps at most 8 gusts, dropping the oldest", () => {
+    const { col, row } = findDenseCell(T + 200)
+    const target = centre(col, row)
+    const scene = setup()
+    const reference = createClouds(lcg(7))
+    reference.resize(grid)
+
+    // The oldest gust would clear the target cell; eight later ones are far away.
+    scene.action(target.x - 76, target.y, T)
+    for (let i = 0; i < 8; i++) scene.action(-5000, -5000, T)
+
+    expect(scene.density(col, row, T + 200)).toBe(reference.density(col, row, T + 200))
+  })
+
   it("draws without throwing", () => {
     const scene = setup()
     const calls: string[] = []

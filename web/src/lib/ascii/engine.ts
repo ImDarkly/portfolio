@@ -14,8 +14,19 @@ export const STILL_TIME_MS = 8000
 export const REDUCED_ACTION_AGE_MS = 300
 
 const FRAME_MS = 16.67
+const MIN_FRAME_MS = 33 // cap the loop at ~30fps
 const MAX_JUMP = 200
 const VELOCITY_DECAY = 0.85
+const VELOCITY_REST = 0.05
+const ALPHA_LEVELS = 8
+const TONES: Tone[] = ["fg", "muted", "accent"]
+
+interface Bucket {
+  ch: string[]
+  x: number[]
+  y: number[]
+  n: number
+}
 const GLYPH_BOOST = 1.3
 
 export function mountBackdrop(
@@ -44,14 +55,27 @@ export function mountBackdrop(
   let lastTime = now()
   let disposed = false
 
+  // Glyphs never overlap, so draw order is irrelevant: batch them per
+  // (tone, alpha level) and set canvas state once per bucket.
+  const buckets: Bucket[] = Array.from({ length: TONES.length * (ALPHA_LEVELS + 1) }, () => ({
+    ch: [],
+    x: [],
+    y: [],
+    n: 0,
+  }))
+
   const painter: Painter = {
     put(ch, col, row, tone, alpha = 1) {
       if (col < 0 || row < 0 || col >= grid.cols || row >= grid.rows) return
       const a = Math.min(Math.max(alpha * baseAlpha * GLYPH_BOOST * mask[row * grid.cols + col], 0), 1)
-      if (a <= 0) return
-      ctx.globalAlpha = a
-      ctx.fillStyle = colors[tone]
-      ctx.fillText(ch, col * grid.cellW, row * grid.cellH)
+      // Quantised in sqrt space: perceptually even, and faint glyphs stay faint.
+      const level = Math.round(Math.sqrt(a) * ALPHA_LEVELS)
+      if (level <= 0) return
+      const b = buckets[TONES.indexOf(tone) * (ALPHA_LEVELS + 1) + level]
+      b.ch[b.n] = ch
+      b.x[b.n] = col * grid.cellW
+      b.y[b.n] = row * grid.cellH
+      b.n++
     },
     text(s, col, row, tone, alpha) {
       for (let i = 0; i < s.length; i++) {
@@ -77,7 +101,7 @@ export function mountBackdrop(
       const r = el.getBoundingClientRect()
       rects.push({ left: r.left, top: r.top, right: r.right, bottom: r.bottom })
     })
-    mask = buildFadeMask(grid, rects)
+    mask = buildFadeMask(grid, rects, mask)
   }
 
   const render = (time: number) => {
@@ -86,10 +110,19 @@ export function mountBackdrop(
     ctx.font = `${CELL_H - 1}px "JetBrains Mono Variable", monospace`
     ctx.textBaseline = "top"
     scene.draw(painter, time)
+    for (let i = 0; i < buckets.length; i++) {
+      const b = buckets[i]
+      if (b.n === 0) continue
+      ctx.fillStyle = colors[TONES[Math.floor(i / (ALPHA_LEVELS + 1))]]
+      ctx.globalAlpha = ((i % (ALPHA_LEVELS + 1)) / ALPHA_LEVELS) ** 2
+      for (let k = 0; k < b.n; k++) ctx.fillText(b.ch[k], b.x[k], b.y[k])
+      b.n = 0
+    }
   }
 
   const drawStill = () => {
-    scene.update(0, STILL_TIME_MS, pointer)
+    // No loop decays velocity here, so a moved pointer would leave a mark forever.
+    scene.update(0, STILL_TIME_MS, { ...pointer, vx: 0, vy: 0 })
     render(STILL_TIME_MS)
   }
 
@@ -99,8 +132,8 @@ export function mountBackdrop(
 
   const resize = () => {
     dpr = Math.min(window.devicePixelRatio || 1, 2)
-    const width = window.innerWidth
-    const height = window.innerHeight
+    const width = canvas.clientWidth || window.innerWidth
+    const height = canvas.clientHeight || window.innerHeight
     canvas.width = Math.round(width * dpr)
     canvas.height = Math.round(height * dpr)
     grid = {
@@ -134,10 +167,14 @@ export function mountBackdrop(
     }
 
     const time = now()
+    if (time - lastTime < MIN_FRAME_MS) return
     const dt = Math.min(3, (time - lastTime) / FRAME_MS)
     lastTime = time
-    pointer.vx *= VELOCITY_DECAY
-    pointer.vy *= VELOCITY_DECAY
+    const decay = VELOCITY_DECAY ** dt // per 60fps frame, whatever the frame rate
+    pointer.vx *= decay
+    pointer.vy *= decay
+    if (Math.abs(pointer.vx) < VELOCITY_REST) pointer.vx = 0
+    if (Math.abs(pointer.vy) < VELOCITY_REST) pointer.vy = 0
     scene.update(dt, time, pointer)
     render(time)
   }

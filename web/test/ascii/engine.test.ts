@@ -7,7 +7,8 @@ import {
   REDUCED_ACTION_AGE_MS,
   STILL_TIME_MS,
 } from "../../src/lib/ascii/engine"
-import type { Painter, Scene } from "../../src/lib/ascii/types"
+import createClouds from "../../src/lib/ascii/scenes/clouds"
+import type { Grid, Painter, Pointer, Scene } from "../../src/lib/ascii/types"
 
 interface Glyph {
   ch: string
@@ -31,8 +32,13 @@ function makeScene() {
   return scene satisfies Scene
 }
 
-function flush(n = 1) {
+// Engine alpha is quantised to 8 levels in sqrt space.
+const q = (a: number) => (Math.round(Math.sqrt(a) * 8) / 8) ** 2
+
+// Advances the fake clock between frames: the engine skips frames under 33ms.
+function flush(n = 1, stepMs = 34) {
   for (let i = 0; i < n; i++) {
+    vi.advanceTimersByTime(stepMs)
     const queue = frames
     frames = []
     queue.forEach((cb) => cb(performance.now()))
@@ -120,8 +126,8 @@ describe("mountBackdrop", () => {
     mount(makeScene())
     flush(2)
 
-    expect(open).toBeCloseTo(0.45 * 1.3, 5)
-    expect(last().alpha).toBeCloseTo(0.22 * 0.45 * 1.3, 5)
+    expect(open).toBeCloseTo(q(0.45 * 1.3), 5)
+    expect(last().alpha).toBeCloseTo(q(0.22 * 0.45 * 1.3), 5)
   })
 
   it("follows theme class changes without a themechange event", async () => {
@@ -134,7 +140,7 @@ describe("mountBackdrop", () => {
     flush(2)
 
     expect(last().fill).toBe("#abcdef")
-    expect(last().alpha).toBeCloseTo(0.55 * 1.3, 5)
+    expect(last().alpha).toBeCloseTo(q(0.55 * 1.3), 5)
   })
 
   it("runs the self-demo once after 1000ms", () => {
@@ -203,6 +209,93 @@ describe("mountBackdrop", () => {
     expect(scene.action).toHaveBeenCalledTimes(1)
     expect(scene.draw).toHaveBeenCalledTimes(2)
     expect(rafCalls).toBe(0)
+  })
+
+  it("caps the loop at 30fps", () => {
+    const scene = makeScene()
+    mount(scene)
+    flush(10, 16.67)
+
+    expect(scene.update).toHaveBeenCalledTimes(5)
+    expect(scene.update.mock.calls[0][0]).toBeCloseTo(2, 1)
+  })
+
+  it("sizes the grid from the canvas box", () => {
+    const scene = makeScene()
+    vi.spyOn(HTMLCanvasElement.prototype, "clientWidth", "get").mockReturnValue(700)
+    vi.spyOn(HTMLCanvasElement.prototype, "clientHeight", "get").mockReturnValue(600)
+    const canvas = mount(scene)
+
+    expect(scene.resize.mock.calls[0][0]).toMatchObject({ width: 700, height: 600, cols: 100, rows: 50 })
+    expect([canvas.width, canvas.height]).toEqual([700, 600])
+  })
+
+  it("passes a still pointer to the reduced-motion frame", () => {
+    const scene = makeScene()
+    const main = document.createElement("main")
+    document.body.append(main)
+    mount(scene, { reducedMotion: true })
+    window.dispatchEvent(new MouseEvent("pointermove", { clientX: 10, clientY: 10 }))
+    window.dispatchEvent(new MouseEvent("pointermove", { clientX: 40, clientY: 30 }))
+
+    main.dispatchEvent(new MouseEvent("click", { bubbles: true }))
+
+    const pointer = scene.update.mock.calls[scene.update.mock.calls.length - 1][2]
+    expect(pointer).toMatchObject({ x: 40, y: 30, vx: 0, vy: 0, inside: true })
+  })
+
+  it("lets parted clouds refill once the pointer rests", () => {
+    function lcg(seed: number) {
+      let s = seed
+      return () => {
+        s = (s * 1664525 + 1013904223) % 4294967296
+        return s / 4294967296
+      }
+    }
+    // jsdom has no layout, so the engine falls back to the 1024x768 window.
+    const grid: Grid = { cols: 147, rows: 64, cellW: 7, cellH: 12, width: 1024, height: 768 }
+    const scene = createClouds(lcg(7))
+    const reference = createClouds(lcg(7))
+    reference.resize(grid)
+    const speeds: number[] = []
+    const update = scene.update
+    scene.update = (dt: number, time: number, p: Pointer) => {
+      speeds.push(Math.hypot(p.vx, p.vy))
+      update(dt, time, p)
+    }
+
+    const MOVE = 10
+    const REST = 90 // ~3s of 30fps frames
+    const start = performance.now()
+    const stop = start + MOVE * 34
+    const end = stop + REST * 34
+    let cell: { col: number; row: number } | undefined
+    for (let row = grid.rows - 1; row >= 0 && !cell; row--) {
+      for (let col = 20; col < grid.cols - 20 && !cell; col++) {
+        if (reference.density(col, row, stop) > 0.3 && reference.density(col, row, end) > 0.3) cell = { col, row }
+      }
+    }
+    const { col, row } = cell!
+    const x = (col + 0.5) * grid.cellW
+    const y = (row + 0.5) * grid.cellH
+
+    mount(scene)
+    for (let i = MOVE; i > 0; i--) {
+      window.dispatchEvent(new MouseEvent("pointermove", { clientX: x - i * 6, clientY: y }))
+      flush(1)
+    }
+    window.dispatchEvent(new MouseEvent("pointermove", { clientX: x, clientY: y }))
+    expect(scene.density(col, row, stop)).toBeLessThan(reference.density(col, row, stop) * 0.5)
+
+    const moving = speeds.length
+    flush(REST)
+
+    // Velocity snaps to exactly 0 within ~0.5s, after which no trail marks are stamped.
+    expect(speeds.slice(moving + 15).every((s) => s === 0)).toBe(true)
+    const undisturbed = reference.density(col, row, end)
+    expect(Math.abs(scene.density(col, row, end) - undisturbed)).toBeLessThanOrEqual(undisturbed * 0.05)
+    // Any mark stamped after the rest would still be alive and dimming the cell.
+    expect(scene.density(col, row, end)).toBe(undisturbed)
   })
 
   it("pauses while the tab is hidden", () => {
