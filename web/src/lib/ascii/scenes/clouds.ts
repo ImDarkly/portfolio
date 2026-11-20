@@ -17,6 +17,8 @@ const MAX_GUSTS = 8
 const TRAIL_REACH = 210 // beyond this a trail mark's effect is < 0.0002
 const RING_HALF = 50
 const MOVING_SPEED = 0.5
+// Noise above this becomes cloud; high enough that clouds come in scattered patches.
+const CUT = 0.5
 
 const emptyGrid: Grid = { cols: 0, rows: 0, cellW: 1, cellH: 1, width: 0, height: 0 }
 
@@ -48,12 +50,9 @@ export default function createClouds(rng: () => number = Math.random): Scene & {
   }
 
   function shade(col: number, row: number, time: number, near: readonly Mark[]) {
-    const { rows, cellW, cellH } = grid
-    if (row < Math.floor(rows * 0.42)) return 0
-    const band = Math.min(1, Math.max(0, (row / rows - 0.52) / 0.2))
-    if (band === 0) return 0
+    const { cellW, cellH } = grid
     const t = time / 1000
-    let d = (fbm(col * 0.04 + t * 0.06, row * 0.13 + t * 0.01) - 0.38) * 2.4 * band
+    let d = (fbm(col * 0.04 + t * 0.06, row * 0.13 + t * 0.01) - CUT) * 2.4
     if (d <= 0) return d
 
     const cx = (col + 0.5) * cellW
@@ -102,26 +101,11 @@ export default function createClouds(rng: () => number = Math.random): Scene & {
     },
     draw(p: Painter, time) {
       const { cols, rows } = grid
-      const top = Math.floor(rows * 0.42)
-      const apex = cols * (grid.width < 1024 ? 0.78 : 0.93)
-      const peakTop = rows * 0.6
-      for (let row = top; row < rows; row++) {
+      for (let row = 0; row < rows; row++) {
         const near = marksNearRow(row, time)
         for (let col = 0; col < cols; col++) {
           const d = shade(col, row, time, near)
-          if (d > 0.1) {
-            p.put(RAMP[Math.min(6, Math.floor(d * 7))], col, row, "fg", 0.25 + d * 0.6)
-            continue
-          }
-          const rise = row - peakTop
-          if (rise < 0) continue
-          const half = rise * 1.6
-          const dx = col - apex
-          if (Math.abs(Math.abs(dx) - half) < 0.8) {
-            p.put(rise < 1 ? "^" : dx < 0 ? "/" : "\\", col, row, rise < 2 ? "accent" : "fg", 0.7)
-          } else if (Math.abs(dx) < half && (col + row) % 3 === 0) {
-            p.put(".", col, row, "fg", 0.35)
-          }
+          if (d > 0.1) p.put(RAMP[Math.min(6, Math.floor(d * 7))], col, row, "fg", 0.25 + d * 0.6)
         }
       }
     },

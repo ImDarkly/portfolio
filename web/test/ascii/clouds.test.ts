@@ -52,12 +52,15 @@ describe("createNoise", () => {
 })
 
 describe("createClouds", () => {
-  it("has no clouds above the band", () => {
+  it("scatters clouds over the whole page, with clear sky between", () => {
     const scene = setup()
-    const row = Math.floor(grid.rows * 0.4)
+    const covered = (rows: number[]) =>
+      rows.flatMap((row) => Array.from({ length: grid.cols }, (_, col) => scene.density(col, row, T) > 0.1))
 
-    for (let col = 0; col < grid.cols; col++) {
-      expect(scene.density(col, row, T)).toBe(0)
+    for (const half of [[...Array(25).keys()], [...Array(25).keys()].map((r) => r + 25)]) {
+      const share = covered(half).filter(Boolean).length / (25 * grid.cols)
+      expect(share).toBeGreaterThan(0.05)
+      expect(share).toBeLessThan(0.7)
     }
   })
 

@@ -7,7 +7,6 @@ import ArrowLeftLine from "@/components/icons/ArrowLeftLine.astro"
 import ArrowRightLine from "@/components/icons/ArrowRightLine.astro"
 import TechTag from "@/components/ui/TechTag.astro"
 import BaseLayout from "@/layouts/BaseLayout.astro"
-import { sceneForProject } from "@/lib/ascii/scenes"
 import { getProjectNeighbours } from "@/lib/project-nav"
 
 export async function getStaticPaths() {
@@ -26,7 +25,6 @@ const neighbours = getProjectNeighbours(
   (await getCollection("projects")).map(({ data }) => data),
   entry.data.slug
 )
-const scene = sceneForProject(entry.data.slug)
 const { Content } = await render(entry)
 const hasBody = Boolean(entry.body?.trim())
 
@@ -45,7 +43,7 @@ const ogImage = await getImage({
   description={description}
   image={ogImage.src}
 >
-  {scene ? <AsciiBackdrop scene={scene} /> : null}
+  <AsciiBackdrop scene="clouds" />
   <main
     class="relative z-10 flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
     <div
