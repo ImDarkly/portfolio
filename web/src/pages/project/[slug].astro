@@ -2,6 +2,7 @@
 import { getImage, Image } from "astro:assets"
 import { getCollection, render } from "astro:content"
 
+import AsciiBackdrop from "@/components/ascii/AsciiBackdrop.astro"
 import ArrowLeftLine from "@/components/icons/ArrowLeftLine.astro"
 import ArrowRightLine from "@/components/icons/ArrowRightLine.astro"
 import TechTag from "@/components/ui/TechTag.astro"
@@ -42,8 +43,13 @@ const ogImage = await getImage({
   description={description}
   image={ogImage.src}
 >
-  <main class="flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
-    <div class="flex w-full max-w-2xl flex-col gap-5 text-left">
+  <AsciiBackdrop scene="clouds" />
+  <main
+    class="relative z-10 flex min-h-svh items-center justify-center px-4 py-6 sm:px-6">
+    <div
+      data-ascii-layout
+      class="flex w-full max-w-2xl flex-col gap-5 text-left"
+    >
       <a
         href="/"
         class="inline-flex items-center gap-2 self-start border border-border bg-transparent px-4 py-2 font-heading text-xs text-muted-foreground lowercase transition-colors hover:text-foreground max-lg:min-h-11"
