@@ -116,6 +116,7 @@ function readColors() {
   colors.muted = s.getPropertyValue("--muted-foreground").trim()
   colors.accent = s.getPropertyValue("--primary").trim()
   colors.A = parseFloat(s.getPropertyValue("--touch-alpha")) || 0.5
+  dirty = true
 }
 // "fade": full strength in the margins, a whisper behind content blocks.
 // "faint": one low strength everywhere.
@@ -133,6 +134,7 @@ function buildMask() {
     const k = Math.min(1, Math.max(0, (d - 8) / 56))
     mask[y * cols + x] = 0.22 + 0.78 * k * k * (3 - 2 * k)
   }
+  dirty = true
 }
 function strength(cx, cy) {
   if (maskMode === "faint") return 0.5
@@ -434,6 +436,7 @@ addEventListener("pointermove", (e) => {
   if (Math.abs(vx) < 200) { pointer.vx = vx; pointer.vy = vy }
   pointer.x = e.clientX; pointer.y = e.clientY
   if (!reducedMQ.matches) mode.move && mode.move(sceneNow)
+  if (dragged) redraw()
 })
 addEventListener("pointerleave", () => { pointer.x = pointer.y = -1e4 })
 let dragged = false
