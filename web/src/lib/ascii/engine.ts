@@ -10,6 +10,7 @@ export interface MountOptions {
 export const CELL_W = 7
 export const CELL_H = 12
 export const DEMO_DELAY_MS = 1000
+export const DEMO_REPEAT_MS = 5000
 export const STILL_TIME_MS = 8000
 export const REDUCED_ACTION_AGE_MS = 300
 
@@ -234,10 +235,15 @@ export function mountBackdrop(
 
   if (!reduced) {
     frame = requestAnimationFrame(tick)
-    demoTimer = setTimeout(() => {
-      const { x, y } = findOpenPoint(grid, mask, Math.round(grid.rows * 0.7))
-      scene.demo(x, y, now())
-    }, DEMO_DELAY_MS)
+    // The demo pulses on repeat, each time in the open space of a random row.
+    const demo = () => {
+      if (document.visibilityState !== "hidden") {
+        const { x, y } = findOpenPoint(grid, mask, Math.floor(Math.random() * grid.rows))
+        scene.demo(x, y, now())
+      }
+      demoTimer = setTimeout(demo, DEMO_REPEAT_MS)
+    }
+    demoTimer = setTimeout(demo, DEMO_DELAY_MS)
   }
 
   return () => {

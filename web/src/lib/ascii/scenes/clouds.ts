@@ -17,8 +17,11 @@ const MAX_GUSTS = 8
 const TRAIL_REACH = 210 // beyond this a trail mark's effect is < 0.0002
 const RING_HALF = 50
 const MOVING_SPEED = 0.5
-// Noise above this becomes cloud; high enough that clouds come in scattered patches.
-const CUT = 0.5
+// A broad, slow noise field decides where clouds exist (few, large ones);
+// the detailed noise inside it shades them.
+const PRESENCE_FROM = 0.57
+const PRESENCE_TO = 0.69
+const CUT = 0.3
 
 const emptyGrid: Grid = { cols: 0, rows: 0, cellW: 1, cellH: 1, width: 0, height: 0 }
 
@@ -31,6 +34,8 @@ export default function createClouds(rng: () => number = Math.random): Scene & {
   let lastMark = -Infinity
 
   const rowMarks: Mark[] = []
+  // How strongly the last shaded cell sits on a gust's wave front (0..1).
+  let glow = 0
 
   function density(col: number, row: number, time: number) {
     return shade(col, row, time, marks)
@@ -43,7 +48,7 @@ export default function createClouds(rng: () => number = Math.random): Scene & {
     for (const m of marks) {
       const age = time - m.t
       if (age < 0) continue
-      const reach = m.gust ? (age * 0.38 + RING_HALF) / 1.4 : TRAIL_REACH / 1.4
+      const reach = m.gust ? (age * 0.38 + RING_HALF * 2) / 1.4 : TRAIL_REACH / 1.4
       if (Math.abs(cy - m.y) <= reach) rowMarks.push(m)
     }
     return rowMarks
@@ -52,9 +57,13 @@ export default function createClouds(rng: () => number = Math.random): Scene & {
   function shade(col: number, row: number, time: number, near: readonly Mark[]) {
     const { cellW, cellH } = grid
     const t = time / 1000
-    let d = (fbm(col * 0.04 + t * 0.06, row * 0.13 + t * 0.01) - CUT) * 2.4
+    const p = fbm(col * 0.012 + t * 0.018 + 50, row * 0.04 + t * 0.003 + 50)
+    if (p <= PRESENCE_FROM) return 0
+    const k = Math.min(1, (p - PRESENCE_FROM) / (PRESENCE_TO - PRESENCE_FROM))
+    let d = (fbm(col * 0.04 + t * 0.06, row * 0.13 + t * 0.01) - CUT) * 2.4 * k * k * (3 - 2 * k)
     if (d <= 0) return d
 
+    glow = 0
     const cx = (col + 0.5) * cellW
     const cy = (row + 0.5) * cellH
     for (const m of near) {
@@ -63,9 +72,10 @@ export default function createClouds(rng: () => number = Math.random): Scene & {
       const dx = cx - m.x
       const dy = (cy - m.y) * 1.4
       if (m.gust) {
-        const outer = age * 380 + RING_HALF
+        const outer = age * 380 + RING_HALF * 2
         if (dx > outer || dx < -outer || dy > outer || dy < -outer) continue
         const ring = Math.abs(Math.sqrt(dx * dx + dy * dy) - age * 380)
+        if (ring < RING_HALF * 2) glow = Math.max(glow, (1 - ring / (RING_HALF * 2)) * (1 - age / 1.6))
         if (ring < RING_HALF) d *= 1 - 0.85 * (1 - ring / RING_HALF) * (1 - age / 1.6)
       } else {
         if (dx > TRAIL_REACH || dx < -TRAIL_REACH || dy > TRAIL_REACH || dy < -TRAIL_REACH) continue
@@ -105,7 +115,10 @@ export default function createClouds(rng: () => number = Math.random): Scene & {
         const near = marksNearRow(row, time)
         for (let col = 0; col < cols; col++) {
           const d = shade(col, row, time, near)
-          if (d > 0.1) p.put(RAMP[Math.min(6, Math.floor(d * 7))], col, row, "fg", 0.25 + d * 0.6)
+          if (d <= 0.1) continue
+          // Clouds stay plain; only a gust's wave front takes the accent.
+          const tone = glow > 0.35 ? "accent" : "fg"
+          p.put(RAMP[Math.min(6, Math.floor(d * 7))], col, row, tone, 0.25 + d * 0.6)
         }
       }
     },

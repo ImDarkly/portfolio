@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 
 import {
   DEMO_DELAY_MS,
+  DEMO_REPEAT_MS,
   mountBackdrop,
   REDUCED_ACTION_AGE_MS,
   STILL_TIME_MS,
@@ -143,7 +144,7 @@ describe("mountBackdrop", () => {
     expect(last().alpha).toBeCloseTo(q(0.55 * 1.3), 5)
   })
 
-  it("runs the self-demo once after 1000ms", () => {
+  it("runs the self-demo after 1000ms, then every 5000ms", () => {
     const scene = makeScene()
     mount(scene)
 
@@ -151,8 +152,12 @@ describe("mountBackdrop", () => {
     expect(scene.demo).not.toHaveBeenCalled()
     vi.advanceTimersByTime(1)
     expect(scene.demo).toHaveBeenCalledTimes(1)
-    vi.advanceTimersByTime(4000)
+    vi.advanceTimersByTime(DEMO_REPEAT_MS - 1)
     expect(scene.demo).toHaveBeenCalledTimes(1)
+    vi.advanceTimersByTime(1)
+    expect(scene.demo).toHaveBeenCalledTimes(2)
+    vi.advanceTimersByTime(DEMO_REPEAT_MS)
+    expect(scene.demo).toHaveBeenCalledTimes(3)
   })
 
   it("triggers action on a click on empty space only", () => {

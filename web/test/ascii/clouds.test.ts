@@ -139,6 +139,22 @@ describe("createClouds", () => {
     expect(scene.density(col, row, T + 200)).toBe(reference.density(col, row, T + 200))
   })
 
+  it("keeps clouds plain, tinting only a gust's wave front", () => {
+    const tones = (scene: ReturnType<typeof setup>, time: number) => {
+      let accent = 0
+      scene.draw({ put: (_ch, _col, _row, tone) => { if (tone === "accent") accent++ }, text: () => {} }, time)
+      return accent
+    }
+    const { col, row } = findDenseCell(T + 200)
+    const target = centre(col, row)
+    const scene = setup()
+    expect(tones(setup(), T + 200)).toBe(0)
+
+    scene.action(target.x - 76, target.y, T)
+
+    expect(tones(scene, T + 200)).toBeGreaterThan(0)
+  })
+
   it("draws without throwing", () => {
     const scene = setup()
     const calls: string[] = []
